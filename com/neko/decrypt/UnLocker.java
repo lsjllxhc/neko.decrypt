@@ -12,8 +12,8 @@ import static com.neko.decrypt.MMK.*;
 
 public class UnLocker {
     public static void main(String[] args) throws Exception {
-        Path srcPath = Path.of("G:\\原始");
-        Path outPath = Path.of("G:\\out");
+        Path srcPath = Path.of("C:\\input");
+        Path outPath = Path.of("C:\\output");
 
 
         try (Stream<Path> lines = Files.list(srcPath)) {
