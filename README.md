@@ -28,14 +28,16 @@
 - 如果遇到文件不可编译，在项目结构里看看com这个文件夹的属性有没有设置成源代码，一般这个属性的文件夹为蓝色文件夹
 - 从github下载zip文件并解压
 - 解密文件一定至少带一套衣服，不带语音包没事
+# 发行说明
 ## 全新GUI版本已发布
 - 下载安装JDK并且配置环境
 - 直接运行jar文件
+- 不建议个人编译，bug巨多
 ## 无GUI版本使用说明
 ### 指令：
 - ` java -jar UnLocker.jar [option] `
 - ` -i [input directory] `
 - ` -o [output directory] `
 ### windows用户可以使用` bat `文件在项目根目录进行处理，把需要解密的文件夹放入` input `文件夹中，运行` UnLock.bat `即可
-## 那么，祝你好运！
+# 那么，祝你好运！
 - 特别鸣谢 HistremRakik
