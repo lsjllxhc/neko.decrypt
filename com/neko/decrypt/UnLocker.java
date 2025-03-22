@@ -13,20 +13,99 @@ import static com.neko.decrypt.MMK.*;
 public class UnLocker {
     public static void main(String[] args) throws Exception {
 
+        String inputDir = "";
+        String outputDir = "";
+
         if (args.length == 0) {
             System.out.println("Welcome use the decrypt tool.");
-            System.out.println("Usage : UnLocker [inputdir] [outputdir]");
+            System.out.println("Usage : UnLocker [option]");
+            System.out.println("Type --help to get help");
             System.out.println("Made time : 2025.3.22 Saturday");
             return;
         }
 
-        if (args.length < 2) {
-            System.out.println("Please provide inputdir and outputdir.");
-            return;
+        else if (args.length == 1) {
+            if (args[0].equals("--help")){
+                System.out.println("-i [dir] : set input directory");
+                System.out.println("-o [dir] : set output directory,it can be not set,and it will create a folder in your working directory");
+                return;
+            }
+            else if (args[0].equals("-i")){
+                System.out.println("You have not set the directory");
+                return;
+            }
+            else if (args[0].equals("-o")){
+                System.out.println("You must set input directory first.");
+                return;
+            }
+            else {
+                System.out.println("Wrong parameters.");
+                System.out.println("If you want any help,type --help");
+                return;
+            }
         }
 
-        String inputDir = args[0];
-        String outputDir = args[1];
+        else if (args.length == 2) {
+            if (args[0].equals("-o")) {
+                System.out.println("You must set input directory first.");
+                return;
+            }
+            else if (args[0].equals("-i")) {
+                inputDir = args[1];
+                outputDir = "./output";
+            }
+            else{
+                System.out.println("Wrong parameters.");
+                System.out.println("If you want any help,type --help");
+                return;
+            }
+        }
+
+        else if (args.length == 3){
+            if (args[0].equals("-o")) {
+                System.out.println("You must set input directory first.");
+                return;
+            }
+            else if (args[0].equals("-i")) {
+                if (args[2].equals("-o")){
+                    System.out.println("You have not set output directory");
+                    return;
+                }
+                else{
+                    System.out.println("Wrong parameters.");
+                    System.out.println("If you want any help,type --help");
+                    return;
+                }
+            }
+            else{
+                System.out.println("Wrong parameters.");
+                System.out.println("If you want any help,type --help");
+                return;
+            }
+        }
+
+        else if (args.length == 4){
+            if (args[0].equals("-o")) {
+                System.out.println("You must set input directory first.");
+                return;
+            }
+            else if (args[0].equals("-i")) {
+                if (args[2].equals("-o")){
+                    inputDir = args[1];
+                    outputDir = args[3];
+                }
+                else{
+                    System.out.println("Wrong parameters.");
+                    System.out.println("If you want any help,type --help");
+                    return;
+                }
+            }
+            else{
+                System.out.println("Wrong parameters.");
+                System.out.println("If you want any help,type --help");
+                return;
+            }
+        }
 
         Path srcPath = Path.of(inputDir);
         Path outPath = Path.of(outputDir);
