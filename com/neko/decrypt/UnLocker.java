@@ -10,10 +10,26 @@ import java.util.stream.Stream;
 
 import static com.neko.decrypt.MMK.*;
 
+package com.neko.decrypt;
+
 public class UnLocker {
     public static void main(String[] args) throws Exception {
-        Path srcPath = Path.of("C:\\input");
-        Path outPath = Path.of("C:\\output");
+
+        if (args.length == 0) {
+            System.out.println("Welcome use the decrypt tool.");
+            System.out.println("Usage : UnLocker [inputdir] [outputdir]");
+        }
+
+        if (args.length < 2) {
+            System.out.println("Please provide inputdir and outputdir.");
+            return;
+        }
+
+        String InputDir = args[0];
+        String OutputDir = args[1];
+
+        Path srcPath = Path.of(InputDir);
+        Path outPath = Path.of(OutputDir);
 
 
         try (Stream<Path> lines = Files.list(srcPath)) {
