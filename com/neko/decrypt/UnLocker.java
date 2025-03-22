@@ -16,6 +16,7 @@ public class UnLocker {
         if (args.length == 0) {
             System.out.println("Welcome use the decrypt tool.");
             System.out.println("Usage : UnLocker [inputdir] [outputdir]");
+            System.out.println("Made time : 2025.3.22 Saturday");
             return;
         }
 
@@ -27,8 +28,8 @@ public class UnLocker {
         String inputDir = args[0];
         String outputDir = args[1];
 
-        Path srcPath = Path.of(InputDir);
-        Path outPath = Path.of(OutputDir);
+        Path srcPath = Path.of(inputDir);
+        Path outPath = Path.of(outputDir);
 
 
         try (Stream<Path> lines = Files.list(srcPath)) {
