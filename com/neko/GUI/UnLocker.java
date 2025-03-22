@@ -1,4 +1,4 @@
-package com.neko.decrypt;
+package com.neko.GUI;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
