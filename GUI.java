@@ -1,4 +1,4 @@
-package GUISCR;
+package GUISCR
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,6 +70,7 @@ public class GUI extends JFrame {
         gbc.weightx = 1;
         gbc.weighty = 1;
         console = new JTextArea();
+        console.setFont(new Font("Monospaced", Font.PLAIN, 12)); // 设置字体，确保支持中文字符
         console.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(console);
         add(scrollPane, gbc);
