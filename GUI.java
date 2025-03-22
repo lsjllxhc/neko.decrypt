@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -117,12 +115,19 @@ public class UnLockerApp extends JFrame {
     private void executeCommand(String command) {
         try {
             Process process = Runtime.getRuntime().exec(command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                console.append(line + "\n");
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            String s;
+            console.append("Standard output:\n");
+            while ((s = stdInput.readLine()) != null) {
+                console.append(s + "\n");
             }
-            reader.close();
+
+            console.append("Standard error:\n");
+            while ((s = stdError.readLine()) != null) {
+                console.append(s + "\n");
+            }
         } catch (Exception e) {
             console.append("Error: " + e.getMessage() + "\n");
         }
