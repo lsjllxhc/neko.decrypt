@@ -31,5 +31,11 @@
 ## 全新GUI版本已发布
 - 下载安装JDK并且配置环境
 - 直接运行jar文件
-## 编译的过程十分简单，那么，祝你好运！
+## 无GUI版本使用说明
+指令：
+` java -jar UnLocker.jar [option] `
+` -i [input directory] `
+` -o [output directory] `
+windows用户可以使用` bat `文件在项目根目录进行处理，把需要解密的文件夹放入` input `文件夹中，运行` UnLock.bat `即可
+## 那么，祝你好运！
 - 特别鸣谢 HistremRakik
