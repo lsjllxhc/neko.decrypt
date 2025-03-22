@@ -9,7 +9,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.*;
 import java.util.stream.Stream;
 
-import static com.neko.decrypt.MMK.*;
+import static com.neko.GUI.MMK.*;
 
 public class UnLocker {
 
