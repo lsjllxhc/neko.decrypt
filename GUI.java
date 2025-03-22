@@ -1,4 +1,4 @@
-package GUISCR
+package GUISCR;
 
 import javax.swing.*;
 import java.awt.*;
