@@ -1,4 +1,4 @@
-package com.neko.decrypt;
+package com.neko.GUI;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
