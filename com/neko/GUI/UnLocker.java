@@ -1,4 +1,4 @@
-package com.neko.GUI;
+package com.neko.decrypt;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -6,15 +6,26 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import java.util.stream.Stream;
 
-import static com.neko.GUI.MMK.*;
+import static com.neko.decrypt.MMK.*;
 
 public class UnLocker {
 
     private static final Logger logger = Logger.getLogger(UnLocker.class.getName());
+
+    static {
+        try {
+            LogManager.getLogManager().reset();
+            FileHandler fileHandler = new FileHandler("log.txt", false); // 'false' to overwrite the file
+            fileHandler.setFormatter(new SimpleFormatter());
+            logger.addHandler(fileHandler);
+            logger.setLevel(Level.ALL);
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Failed to initialize logger", e);
+        }
+    }
 
     public static void startDecrypt(Path srcPath, Path outPath) throws Exception {
         try (Stream<Path> paths = Files.walk(srcPath)) {
