@@ -1,155 +1,151 @@
-package com.neko.GUI;
+package com.neko.decrypt;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.stream.Stream;
 
-public class UnlockerGUI extends JFrame {
-    private JTextField inputPathField;
-    private JButton inputBrowseButton;
-    private JTextField outputPathField;
-    private JButton outputBrowseButton;
-    private JButton runButton;
-    private JLabel statusLabel;
-    private JPanel mainPanel;
-    private static final Logger LOGGER = Logger.getLogger(UnlockerGUI.class.getName());
-    private static final Path LOG_PATH = Path.of("logs/unLocker.log");
+import static com.neko.decrypt.MMK.*;
 
-    static {
-        try {
-            if (!Files.exists(LOG_PATH.getParent())) {
-                Files.createDirectories(LOG_PATH.getParent());
-            }
-            // 设置 append 参数为 false 以清空日志文件
-            FileHandler fileHandler = new FileHandler(LOG_PATH.toString(), false);
-            fileHandler.setFormatter(new SimpleFormatter());
-            LOGGER.addHandler(fileHandler);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+public class UnLocker {
+    // ▲▲▲▲▲▲ 变更后（原 main 方法被注释或删除） ▲▲▲▲▲▲
+    /*
+    // ❌ 完全注释掉原本的 main 方法
+    public static void main(String[] args) throws Exception {
+        startDecrypt(Path.of("TestInput"), Path.of("TestOutput"));
     }
-
-    public UnlockerGUI() {
-        // 窗体基本设置
-        setTitle("文件解锁工具");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setContentPane(mainPanel);
-        setSize(600, 250);
-        setLocationRelativeTo(null); // 居中
-
-        // 事件绑定
-        inputBrowseButton.addActionListener(this::browseInputPath);
-        outputBrowseButton.addActionListener(this::browseOutputPath);
-        runButton.addActionListener(this::runUnlocker);
-    }
-
-    private void browseInputPath(ActionEvent e) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            inputPathField.setText(chooser.getSelectedFile().getAbsolutePath());
-        }
-    }
-
-    private void browseOutputPath(ActionEvent e) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            outputPathField.setText(chooser.getSelectedFile().getAbsolutePath());
-        }
-    }
-
-    private void runUnlocker(ActionEvent e) {
-        String input = inputPathField.getText().trim();
-        String output = outputPathField.getText().trim();
-
-        if (input.isEmpty() || output.isEmpty()) {
-            showMessage("请先选择输入和输出路径！", "错误", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Path inputPath = Path.of(input).toAbsolutePath();
-        Path outputPath = Path.of(output).toAbsolutePath();
-
-        if (validatePaths(inputPath, outputPath)) {
-            new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() {
-                    runButton.setEnabled(false);
-                    updateStatus("运行中...", Color.BLUE);
-
-                    try {
-                        UnLocker.startDecrypt(inputPath, outputPath);
-                        updateStatus("处理完成！", Color.GREEN);
-                    } catch (Exception ex) {
-                        updateStatus("错误: " + ex.getMessage(), Color.RED);
-                        LOGGER.severe("错误: " + ex.getMessage());
-                        ex.printStackTrace();
-                    } finally {
-                        runButton.setEnabled(true);
-                        showLog();
-                    }
-                    return null;
+    */
+    // ✅ 新增动态参数方法（接收GUI传递的路径）
+    public static void startDecrypt(Path srcPath, Path outPath) throws Exception {
+        try (Stream<Path> lines = Files.list(srcPath)) {
+            var iterator = lines.iterator();
+            while (iterator.hasNext()) {
+                Path path = iterator.next();
+                try {
+                    SecretKey secretKey = getSecretKey(path);
+                    if (secretKey == null)
+                        continue;
+                    System.out.println("正在处理: " + path + " " + secretKey);
+                    handleDiv(path, outPath, secretKey);
+                } catch (Exception e) {
+                    System.out.println("Error: " + path + " -> " + e.getMessage());
                 }
-            }.execute();
-        }
-    }
-
-    private boolean validatePaths(Path inputPath, Path outputPath) {
-        if (Files.notExists(inputPath) || !Files.isDirectory(inputPath)) {
-            showMessage("输入路径不存在或不是目录！有效路径示例：\n" + Path.of(".").toAbsolutePath(), "路径错误", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-
-        try {
-            if (!Files.exists(outputPath)) {
-                Files.createDirectories(outputPath);
             }
-        } catch (IOException ex) {
-            showMessage("无法创建输出目录！请检查权限或路径合法性。\n错误详情：" + ex.getMessage(), "路径错误", JOptionPane.ERROR_MESSAGE);
-            return false;
         }
-        return true;
     }
 
-    private void showMessage(String message, String title, int messageType) {
-        JOptionPane.showMessageDialog(this, message, title, messageType);
-    }
+    /**
+     * 处理目录
+     *
+     * @param srcDiv    源目录
+     * @param targetDiv 目标目录
+     * @param secretKey 密钥
+     */
+    public static void handleDiv(Path srcDiv, Path targetDiv, SecretKey secretKey) throws IOException {
+        Files.walkFileTree(srcDiv, new FileVisitor<>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                Path relativize = srcDiv.getParent().relativize(dir);
+                Path target = targetDiv.resolve(relativize);
+                if (!Files.exists(target))
+                    Files.createDirectory(target);
+                return FileVisitResult.CONTINUE;
+            }
 
-    private void updateStatus(String message, Color color) {
-        SwingUtilities.invokeLater(() -> {
-            statusLabel.setText(message);
-            statusLabel.setForeground(color);
-        });
-    }
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Path relativize = srcDiv.getParent().relativize(file);
+                Path target = targetDiv.resolve(relativize);
 
-    private void showLog() {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                List<String> logLines = Files.readAllLines(LOG_PATH);
-                JTextArea textArea = new JTextArea(String.join("\n", logLines));
-                textArea.setEditable(false);
-                JScrollPane scrollPane = new JScrollPane(textArea);
-                scrollPane.setPreferredSize(new Dimension(600, 400));
+                if (!Files.exists(target))
+                    switch (file.getFileName().toString()) {
+                        case "fileMap.json", "meta.mko" -> {
+                            Files.copy(file, target);
+                        }
+                        default -> {
+                            byte[] data = secretKey.aes(Files.readAllBytes(file));
+                            if (data == null) {
+                                System.out.println("Warn: " + file + " 无法解密此文件");
+                                break;
+                            }
+                            Files.write(target, data);
+                        }
+                    }
 
-                JOptionPane.showMessageDialog(this, scrollPane, "日志内容", JOptionPane.INFORMATION_MESSAGE);
-            } catch (IOException e) {
-                showMessage("无法读取日志文件！", "错误", JOptionPane.ERROR_MESSAGE);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
             }
         });
     }
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            UnlockerGUI gui = new UnlockerGUI();
-            gui.setVisible(true);
+    /**
+     * 通过寻找json文件来尝试各个密钥
+     *
+     * @param rootPath 根目录
+     * @return 最终密钥
+     */
+    public static MMK.SecretKey getSecretKey(Path rootPath) throws IOException {
+        final Path[] files = new Path[3];
+        Files.walkFileTree(rootPath, new FileVisitor<>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (file.toString().endsWith(".json")) {
+                    if (isJson(Files.readAllBytes(file)))
+                        return FileVisitResult.CONTINUE;
+                    files[0] = file;
+                    return FileVisitResult.TERMINATE;
+                }
+                if (file.toString().endsWith(".png") || file.toString().endsWith(".jpg")) {
+                    if (isImage(Files.readAllBytes(file)))
+                        return FileVisitResult.CONTINUE;
+                    files[1] = file;
+                    return FileVisitResult.TERMINATE;
+                }
+                if (file.toString().endsWith(".mp4")) {
+                    if (isMp4(Files.readAllBytes(file)))
+                        return FileVisitResult.CONTINUE;
+                    files[2] = file;
+                    return FileVisitResult.TERMINATE;
+                }
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
         });
+
+        if (files[0] != null) {
+            return MMK.SecretKey.getFromJson(Files.readAllBytes(files[0]));
+        } else if (files[1] != null) {
+            return MMK.SecretKey.getFromImage(Files.readAllBytes(files[1]));
+        } else if (files[2] != null) {
+            return MMK.SecretKey.getFromMp4(Files.readAllBytes(files[2]));
+        } else {
+            throw new RuntimeException("无法判断");
+        }
     }
 }
