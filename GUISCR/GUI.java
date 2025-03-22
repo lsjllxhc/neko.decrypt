@@ -114,27 +114,6 @@ public class GUI extends JFrame {
         printWelcomMessage();
     }
 
-    private void executeCommand(String command) {
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
-
-            String s;
-            console.append("Standard output:\n\n");
-            while ((s = stdInput.readLine()) != null) {
-                console.append(s + "\n\n");
-            }
-
-            console.append("Standard error:\n\n");
-            while ((s = stdError.readLine()) != null) {
-                console.append(s + "\n\n");
-            }
-        } catch (Exception e) {
-            console.append("Error: " + e.getMessage() + "\n\n");
-        }
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             GUI app = new GUI();
