@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import com.neko.decrypt.UnLocker.*;
+
 public class GUI extends JFrame {
     private JTextField inputPathField;
     private JTextField outputPathField;
@@ -103,17 +105,13 @@ public class GUI extends JFrame {
             return;
         }
 
-        String command = "java -jar ./UnLocker.jar -i " + inputDir;
         if (!outputDir.isEmpty()) {
-            command += " -o " + outputDir;
+            processFiles(inputDir,outputDir);
         }
-
-        executeCommand(command);
     }
 
     private void showVersion() {
-        String command = "java -jar ./UnLocker.jar";
-        executeCommand(command);
+        printWelcomMessage();
     }
 
     private void executeCommand(String command) {
