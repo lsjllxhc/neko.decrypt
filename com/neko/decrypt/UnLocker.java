@@ -24,8 +24,8 @@ public class UnLocker {
             return;
         }
 
-        String InputDir = args[0];
-        String OutputDir = args[1];
+        String inputDir = args[0];
+        String outputDir = args[1];
 
         Path srcPath = Path.of(InputDir);
         Path outPath = Path.of(OutputDir);
