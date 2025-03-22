@@ -17,48 +17,14 @@ public class UnLocker {
 
     private static final Logger logger = Logger.getLogger(UnLocker.class.getName());
 
-    public static void main(String[] args) {
+    static {
         try {
             FileHandler fh = new FileHandler("UnLock.log");
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
-
-            if (args.length == 0) {
-                printWelcomeMessage();
-                return;
-            }
-
-            String inputDir = "";
-            String outputDir = "./output";
-
-            for (int i = 0; i < args.length; i++) {
-                switch (args[i]) {
-                    case "--help":
-                        printHelpMessage();
-                        return;
-                    case "-i":
-                        if (i + 1 < args.length) {
-                            inputDir = args[++i];
-                        } else {
-                            throw new IllegalArgumentException("You have not set the input directory");
-                        }
-                        break;
-                    case "-o":
-                        if (i + 1 < args.length) {
-                            outputDir = args[++i];
-                        } else {
-                            throw new IllegalArgumentException("You have not set the output directory");
-                        }
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Wrong parameters. If you want any help, type --help");
-                }
-            }
-
-            processFiles(inputDir, outputDir);
-        } catch (Exception e) {
-            logger.severe("Error: " + e.getMessage());
+        } catch (IOException e) {
+            logger.severe("Failed to set up logger: " + e.getMessage());
         }
     }
 
