@@ -7,13 +7,23 @@ import java.io.IOException;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import static com.neko.decrypt.MMK.*;
 
 public class UnLocker {
 
+    private static final Logger logger = Logger.getLogger(UnLocker.class.getName());
+
     public static void main(String[] args) {
         try {
+            FileHandler fh = new FileHandler("UnLock.log");
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+
             if (args.length == 0) {
                 printWelcomeMessage();
                 return;
@@ -48,7 +58,7 @@ public class UnLocker {
 
             processFiles(inputDir, outputDir);
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            logger.severe("Error: " + e.getMessage());
         }
     }
 
@@ -64,10 +74,10 @@ public class UnLocker {
                     SecretKey secretKey = getSecretKey(path);
                     if (secretKey == null)
                         continue;
-                    System.out.println("Processing: " + path + " " + secretKey);
+                    logger.info("Processing: " + path + " " + secretKey);
                     handleDiv(path, outPath, secretKey);
                 } catch (Exception e) {
-                    System.out.println("Error: " + path + " -> " + e.getMessage());
+                    logger.severe("Error: " + path + " -> " + e.getMessage());
                 }
             }
         }
@@ -109,7 +119,7 @@ public class UnLocker {
                         default -> {
                             byte[] data = secretKey.aes(Files.readAllBytes(file));
                             if (data == null) {
-                                System.out.println("Warn: " + file + " Unable to decrypt this file");
+                                logger.warning("Warn: " + file + " Unable to decrypt this file");
                                 break;
                             }
                             Files.write(target, data);
