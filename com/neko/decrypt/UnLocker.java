@@ -60,7 +60,7 @@ public class UnLocker {
                     SecretKey secretKey = getSecretKey(path);
                     if (secretKey == null)
                         continue;
-                    System.out.println("正在处理: " + path + " " + secretKey);
+                    System.out.println("Processing: " + path + " " + secretKey);
                     handleDiv(path, outPath, secretKey);
                 } catch (Exception e) {
                     System.out.println("Error: " + path + " -> " + e.getMessage());
@@ -73,7 +73,7 @@ public class UnLocker {
         System.out.println("Welcome use the decrypt tool.");
         System.out.println("Usage : UnLocker [option]");
         System.out.println("Type --help to get help");
-        System.out.println("Made time : 2025.3.22 Saturday");
+        System.out.println("Made time : 2025.3.22 Saturday 18:38:00");
     }
 
     private static void printHelpMessage() {
@@ -105,7 +105,7 @@ public class UnLocker {
                         default -> {
                             byte[] data = secretKey.aes(Files.readAllBytes(file));
                             if (data == null) {
-                                System.out.println("Warn: " + file + " 无法解密此文件");
+                                System.out.println("Warn: " + file + " Unable to decrypt this file");
                                 break;
                             }
                             Files.write(target, data);
@@ -176,7 +176,7 @@ public class UnLocker {
         } else if (files[2] != null) {
             return MMK.SecretKey.getFromMp4(Files.readAllBytes(files[2]));
         } else {
-            throw new RuntimeException("无法判断");
+            throw new RuntimeException("Unable to judge");
         }
     }
 }
