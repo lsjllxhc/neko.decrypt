@@ -49,18 +49,6 @@ public class UnLocker {
         }
     }
 
-    private static void printWelcomeMessage() {
-        System.out.println("Welcome use the decrypt tool.");
-        System.out.println("Usage : UnLocker [option]");
-        System.out.println("Type --help to get help");
-        System.out.println("Made time : 2025.3.22 Saturday 18:38:00");
-    }
-
-    private static void printHelpMessage() {
-        System.out.println("-i [dir] : set input directory");
-        System.out.println("-o [dir] : set output directory, it can be not set, and it will create a folder in your working directory");
-    }
-
     public static void handleDiv(Path srcDiv, Path targetDiv, SecretKey secretKey) throws IOException {
         Files.walkFileTree(srcDiv, new FileVisitor<>() {
             @Override
