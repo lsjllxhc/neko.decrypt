@@ -11,16 +11,17 @@ import java.nio.file.FileVisitor;
 import static com.neko.decrypt.MMK.*;
 
 public class UnLocker {
-    public static void main(String[] args) throws Exception {
-        String inputDir = "";
-        String outputDir = "./output";
 
-        if (args.length == 0) {
-            printWelcomeMessage();
-            return;
-        }
-
+    public static void main(String[] args) {
         try {
+            if (args.length == 0) {
+                printWelcomeMessage();
+                return;
+            }
+
+            String inputDir = "";
+            String outputDir = "./output";
+
             for (int i = 0; i < args.length; i++) {
                 switch (args[i]) {
                     case "--help":
@@ -44,11 +45,14 @@ public class UnLocker {
                         throw new IllegalArgumentException("Wrong parameters. If you want any help, type --help");
                 }
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
 
+            processFiles(inputDir, outputDir);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public static void processFiles(String inputDir, String outputDir) throws IOException {
         Path srcPath = Path.of(inputDir);
         Path outPath = Path.of(outputDir);
 
@@ -130,8 +134,7 @@ public class UnLocker {
     public static MMK.SecretKey getSecretKey(Path rootPath) throws IOException {
         final Path[] files = new Path[3];
         Files.walkFileTree(rootPath, new FileVisitor<>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 return FileVisitResult.CONTINUE;
             }
 
