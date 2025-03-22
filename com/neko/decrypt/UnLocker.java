@@ -10,14 +10,13 @@ import java.util.stream.Stream;
 
 import static com.neko.decrypt.MMK.*;
 
-package com.neko.decrypt;
-
 public class UnLocker {
     public static void main(String[] args) throws Exception {
 
         if (args.length == 0) {
             System.out.println("Welcome use the decrypt tool.");
             System.out.println("Usage : UnLocker [inputdir] [outputdir]");
+            return;
         }
 
         if (args.length < 2) {
