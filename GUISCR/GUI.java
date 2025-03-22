@@ -2,8 +2,7 @@ package GUISCR;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 import com.neko.decrypt.UnLocker.*;
@@ -105,8 +104,32 @@ public class GUI extends JFrame {
             return;
         }
 
+        // 清除 UnLock.log 文件内容
+        clearLogFile();
+
         if (!outputDir.isEmpty()) {
-            processFiles(inputDir,outputDir);
+            processFiles(inputDir, outputDir);
+            // 显示 UnLock.log 文件内容
+            displayLogFile();
+        }
+    }
+
+    private void clearLogFile() {
+        try (PrintWriter writer = new PrintWriter("UnLock.log")) {
+            writer.print("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayLogFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("UnLock.log"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                console.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
