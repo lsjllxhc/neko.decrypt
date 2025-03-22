@@ -1,115 +1,56 @@
 package com.neko.decrypt;
 
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.util.stream.Stream;
 import java.io.IOException;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.stream.Stream;
 
 import static com.neko.decrypt.MMK.*;
 
 public class UnLocker {
     public static void main(String[] args) throws Exception {
-
         String inputDir = "";
-        String outputDir = "";
+        String outputDir = "./output";
 
         if (args.length == 0) {
-            System.out.println("Welcome use the decrypt tool.");
-            System.out.println("Usage : UnLocker [option]");
-            System.out.println("Type --help to get help");
-            System.out.println("Made time : 2025.3.22 Saturday");
+            printWelcomeMessage();
             return;
         }
 
-        else if (args.length == 1) {
-            if (args[0].equals("--help")){
-                System.out.println("-i [dir] : set input directory");
-                System.out.println("-o [dir] : set output directory,it can be not set,and it will create a folder in your working directory");
-                return;
-            }
-            else if (args[0].equals("-i")){
-                System.out.println("You have not set the directory");
-                return;
-            }
-            else if (args[0].equals("-o")){
-                System.out.println("You must set input directory first.");
-                return;
-            }
-            else {
-                System.out.println("Wrong parameters.");
-                System.out.println("If you want any help,type --help");
-                return;
-            }
-        }
-
-        else if (args.length == 2) {
-            if (args[0].equals("-o")) {
-                System.out.println("You must set input directory first.");
-                return;
-            }
-            else if (args[0].equals("-i")) {
-                inputDir = args[1];
-                outputDir = "./output";
-            }
-            else{
-                System.out.println("Wrong parameters.");
-                System.out.println("If you want any help,type --help");
-                return;
-            }
-        }
-
-        else if (args.length == 3){
-            if (args[0].equals("-o")) {
-                System.out.println("You must set input directory first.");
-                return;
-            }
-            else if (args[0].equals("-i")) {
-                if (args[2].equals("-o")){
-                    System.out.println("You have not set output directory");
-                    return;
-                }
-                else{
-                    System.out.println("Wrong parameters.");
-                    System.out.println("If you want any help,type --help");
-                    return;
+        try {
+            for (int i = 0; i < args.length; i++) {
+                switch (args[i]) {
+                    case "--help":
+                        printHelpMessage();
+                        return;
+                    case "-i":
+                        if (i + 1 < args.length) {
+                            inputDir = args[++i];
+                        } else {
+                            throw new IllegalArgumentException("You have not set the input directory");
+                        }
+                        break;
+                    case "-o":
+                        if (i + 1 < args.length) {
+                            outputDir = args[++i];
+                        } else {
+                            throw new IllegalArgumentException("You have not set the output directory");
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Wrong parameters. If you want any help, type --help");
                 }
             }
-            else{
-                System.out.println("Wrong parameters.");
-                System.out.println("If you want any help,type --help");
-                return;
-            }
-        }
-
-        else if (args.length == 4){
-            if (args[0].equals("-o")) {
-                System.out.println("You must set input directory first.");
-                return;
-            }
-            else if (args[0].equals("-i")) {
-                if (args[2].equals("-o")){
-                    inputDir = args[1];
-                    outputDir = args[3];
-                }
-                else{
-                    System.out.println("Wrong parameters.");
-                    System.out.println("If you want any help,type --help");
-                    return;
-                }
-            }
-            else{
-                System.out.println("Wrong parameters.");
-                System.out.println("If you want any help,type --help");
-                return;
-            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return;
         }
 
         Path srcPath = Path.of(inputDir);
         Path outPath = Path.of(outputDir);
-
 
         try (Stream<Path> lines = Files.list(srcPath)) {
             var iterator = lines.iterator();
@@ -128,13 +69,18 @@ public class UnLocker {
         }
     }
 
-    /**
-     * 处理目录
-     *
-     * @param srcDiv    源目录
-     * @param targetDiv 目标目录
-     * @param secretKey 密钥
-     */
+    private static void printWelcomeMessage() {
+        System.out.println("Welcome use the decrypt tool.");
+        System.out.println("Usage : UnLocker [option]");
+        System.out.println("Type --help to get help");
+        System.out.println("Made time : 2025.3.22 Saturday");
+    }
+
+    private static void printHelpMessage() {
+        System.out.println("-i [dir] : set input directory");
+        System.out.println("-o [dir] : set output directory, it can be not set, and it will create a folder in your working directory");
+    }
+
     public static void handleDiv(Path srcDiv, Path targetDiv, SecretKey secretKey) throws IOException {
         Files.walkFileTree(srcDiv, new FileVisitor<>() {
             @Override
@@ -181,12 +127,6 @@ public class UnLocker {
         });
     }
 
-    /**
-     * 通过寻找json文件来尝试各个密钥
-     *
-     * @param rootPath 根目录
-     * @return 最终密钥
-     */
     public static MMK.SecretKey getSecretKey(Path rootPath) throws IOException {
         final Path[] files = new Path[3];
         Files.walkFileTree(rootPath, new FileVisitor<>() {
