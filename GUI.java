@@ -119,17 +119,17 @@ public class UnLockerApp extends JFrame {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
             String s;
-            console.append("Standard output:\n");
+            console.append("Standard output:\n\n");
             while ((s = stdInput.readLine()) != null) {
-                console.append(s + "\n");
+                console.append(s + "\n\n");
             }
 
-            console.append("Standard error:\n");
+            console.append("Standard error:\n\n");
             while ((s = stdError.readLine()) != null) {
-                console.append(s + "\n");
+                console.append(s + "\n\n");
             }
         } catch (Exception e) {
-            console.append("Error: " + e.getMessage() + "\n");
+            console.append("Error: " + e.getMessage() + "\n\n");
         }
     }
 
