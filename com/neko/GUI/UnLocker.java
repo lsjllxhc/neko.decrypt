@@ -1,4 +1,4 @@
-package com.neko.decrypt;
+package com.neko.GUI;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import static com.neko.decrypt.MMK.*;
+import static com.neko.GUI.MMK.*;
 
 public class UnLocker {
 
