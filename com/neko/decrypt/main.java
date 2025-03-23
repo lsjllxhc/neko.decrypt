@@ -1,29 +1,30 @@
-package com.util.regex.*;
+package com.neko.decrypt;
 
-public class GUI extends JFrame {
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.neko.decrypt.UnLocker.processFiles;
+
+public class main extends JFrame {
     private JTextField inputPathField;
     private JTextField outputPathField;
     private JTextArea console;
     private JButton runButton;
     private JCheckBox setOutputAsInputCheckBox;
 
-    public GUI() {
-        initializeUI();
-        setWindowListener();
-        createMenu();
-        createComponents();
-        showWelcomeDialog();
-    }
-
-    private void initializeUI() {
+    public main() {
         setTitle("UnLocker");
         setSize(600, 400);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // 设置为不进行任何操作
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
-    }
 
-    private void setWindowListener() {
+        // 添加窗口监听器
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -35,89 +36,102 @@ public class GUI extends JFrame {
                 }
             }
         });
-    }
 
-    private void createMenu() {
+        // 创建菜单栏
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
+        // 创建“文件”菜单
         JMenu fileMenu = new JMenu("文件");
         menuBar.add(fileMenu);
 
+        // 关于软件菜单项
         JMenuItem aboutMenuItem = new JMenuItem("关于软件");
         aboutMenuItem.addActionListener(e -> showAboutDialog());
         fileMenu.add(aboutMenuItem);
 
+        // 打开输入文件夹菜单项
         JMenuItem openInputMenuItem = new JMenuItem("打开输入文件夹");
         openInputMenuItem.addActionListener(e -> openInputFolder());
         fileMenu.add(openInputMenuItem);
 
+        // 打开输出文件夹菜单项
         JMenuItem openOutputMenuItem = new JMenuItem("打开输出文件夹");
         openOutputMenuItem.addActionListener(e -> openOutputFolder());
         fileMenu.add(openOutputMenuItem);
 
+        // 创建“控制台”菜单
         JMenu consoleMenu = new JMenu("控制台");
         menuBar.add(consoleMenu);
 
+        // 清空控制台菜单项
         JMenuItem clearConsoleMenuItem = new JMenuItem("清空");
         clearConsoleMenuItem.addActionListener(e -> clearConsole());
         consoleMenu.add(clearConsoleMenuItem);
-    }
 
-    private void createComponents() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        addComponent(new JLabel("输入文件夹:"), gbc, 0, 0);
+        // 输入文件夹选择器
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(new JLabel("输入文件夹:"), gbc);
+
+        gbc.gridx = 1;
         inputPathField = new JTextField(30);
-        addComponent(inputPathField, gbc, 1, 0);
-        JButton inputButton = createButton("选择", e -> selectInputFolder());
-        addComponent(inputButton, gbc, 2, 0);
+        add(inputPathField, gbc);
 
-        addComponent(new JLabel("输出文件夹:"), gbc, 0, 1);
+        gbc.gridx = 2;
+        JButton inputButton = new JButton("选择");
+        inputButton.setPreferredSize(new Dimension(60, 30)); // 设置为合适的大小
+        inputButton.addActionListener(e -> selectInputFolder());
+        add(inputButton, gbc);
+
+        // 输出文件夹选择器
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(new JLabel("输出文件夹:"), gbc);
+
+        gbc.gridx = 1;
         outputPathField = new JTextField(30);
-        addComponent(outputPathField, gbc, 1, 1);
-        JButton outputButton = createButton("选择", e -> selectOutputFolder());
-        addComponent(outputButton, gbc, 2, 1);
+        add(outputPathField, gbc);
 
+        gbc.gridx = 2;
+        JButton outputButton = new JButton("选择");
+        outputButton.setPreferredSize(new Dimension(60, 30)); // 设置为合适的大小
+        outputButton.addActionListener(e -> selectOutputFolder());
+        add(outputButton, gbc);
+
+        // 设置输出文件夹为输入文件夹复选框
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
         setOutputAsInputCheckBox = new JCheckBox("设置输出文件夹为输入文件夹");
         setOutputAsInputCheckBox.addActionListener(e -> toggleOutputAsInput());
-        addComponent(setOutputAsInputCheckBox, gbc, 0, 2, 3);
+        add(setOutputAsInputCheckBox, gbc);
 
-        runButton = createButton("运行", e -> runCommand());
-        addComponent(runButton, gbc, 0, 3, 3);
+        // 运行按钮
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        runButton = new JButton("运行");
+        runButton.addActionListener(e -> runCommand());
+        add(runButton, gbc);
 
+        // 控制台
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
         console = new JTextArea();
-        console.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        console.setFont(new Font("Monospaced", Font.PLAIN, 12)); // 设置字体，确保支持中文字符
         console.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(console);
-        addComponent(scrollPane, gbc, 0, 4, 3, GridBagConstraints.BOTH, 1, 1);
-    }
+        add(scrollPane, gbc);
 
-    private JButton createButton(String text, ActionListener actionListener) {
-        JButton button = new JButton(text);
-        button.setPreferredSize(new Dimension(60, 30));
-        button.addActionListener(actionListener);
-        return button;
-    }
-
-    private void addComponent(Component component, GridBagConstraints gbc, int x, int y) {
-        addComponent(component, gbc, x, y, 1, GridBagConstraints.HORIZONTAL, 0, 0);
-    }
-
-    private void addComponent(Component component, GridBagConstraints gbc, int x, int y, int width) {
-        addComponent(component, gbc, x, y, width, GridBagConstraints.HORIZONTAL, 0, 0);
-    }
-
-    private void addComponent(Component component, GridBagConstraints gbc, int x, int y, int width, int fill, double weightx, double weighty) {
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = width;
-        gbc.fill = fill;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-        add(component, gbc);
+        // 显示欢迎对话框
+        showWelcomeDialog();
     }
 
     private void showAboutDialog() {
@@ -125,81 +139,92 @@ public class GUI extends JFrame {
         aboutDialog.setSize(400, 300);
         aboutDialog.setLayout(new BorderLayout());
 
-        JPanel contentPanel = createContentPanel();
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel titleLabel = new JLabel("Neko.UnLocker.Decrypt");
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(titleLabel);
+
+        JLabel versionLabel = new JLabel("版本: 2025.3.23-jdk21-windows-v0.6.0");
+        versionLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        versionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(versionLabel);
+
+        JLabel authorLabel = new JLabel("制作者: Histrem Rakik");
+        authorLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        authorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(authorLabel);
+
+        JLabel descriptionLabel = new JLabel("<html><body style='text-align: center;'>Neko.UnLocker.Decrypt 是一个用于解密文件的专业工具，<br>支持多种格式的文件解密。</body></html>");
+        descriptionLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        descriptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(descriptionLabel);
+
+        JButton closeButton = new JButton("关闭");
+        closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        closeButton.addActionListener(e -> aboutDialog.dispose());
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        contentPanel.add(closeButton);
+
         aboutDialog.add(contentPanel, BorderLayout.CENTER);
         aboutDialog.setLocationRelativeTo(this);
         aboutDialog.setVisible(true);
     }
 
-    private JPanel createContentPanel() {
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        contentPanel.add(createLabel("Neko.UnLocker.Decrypt", new Font("Serif", Font.BOLD, 18)));
-        contentPanel.add(createLabel("版本: 2025.3.23-jdk21-windows-v0.6.0", new Font("Serif", Font.PLAIN, 14)));
-        contentPanel.add(createLabel("制作者: Histrem Rakik", new Font("Serif", Font.PLAIN, 14)));
-        contentPanel.add(createLabel("<html><body style='text-align: center;'>Neko.UnLocker.Decrypt 是一个用于解密文件的专业工具，<br>支持多种格式的文件解密。</body></html>", new Font("Serif", Font.PLAIN, 14)));
-
-        JButton closeButton = new JButton("关闭");
-        closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        closeButton.addActionListener(e -> ((Window) SwingUtilities.getWindowAncestor(e.getSource())).dispose());
-        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        contentPanel.add(closeButton);
-
-        return contentPanel;
-    }
-
-    private JLabel createLabel(String text, Font font) {
-        JLabel label = new JLabel(text);
-        label.setFont(font);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return label;
-    }
-
     private void showWelcomeDialog() {
-        JOptionPane.showMessageDialog(this, "欢迎使用Neko.UnLocker.Decrypt, 制作者Histrem Rakik。", "欢迎", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "欢迎使用Neko.UnLocker.Decrypt,制作者Histrem Rakik。", "欢迎", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void selectInputFolder() {
-        selectFolder(inputPathField, setOutputAsInputCheckBox.isSelected() ? outputPathField : null);
-    }
-
-    private void selectOutputFolder() {
-        selectFolder(outputPathField, null);
-    }
-
-    private void selectFolder(JTextField pathField, JTextField linkedField) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            String selectedPath = fileChooser.getSelectedFile().getAbsolutePath();
-            pathField.setText(selectedPath);
-            if (linkedField != null) {
-                linkedField.setText(selectedPath);
+            inputPathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            if (setOutputAsInputCheckBox.isSelected()) {
+                outputPathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
             }
         } else {
-            JOptionPane.showMessageDialog(this, "未选择文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "未选择输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void selectOutputFolder() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            outputPathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        } else {
+            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     private void openInputFolder() {
-        openFolder(inputPathField.getText());
+        String inputDir = inputPathField.getText();
+        if (inputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "未选择输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        } else {
+            try {
+                Desktop.getDesktop().open(new File(inputDir));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "无法打开输入文件夹", "错误", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private void openOutputFolder() {
-        openFolder(outputPathField.getText());
-    }
-
-    private void openFolder(String path) {
-        if (path.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "未选择文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        String outputDir = outputPathField.getText();
+        if (outputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
-                Desktop.getDesktop().open(new File(path));
+                Desktop.getDesktop().open(new File(outputDir));
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "无法打开文件夹", "错误", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "无法打开输出文件夹", "错误", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -214,48 +239,75 @@ public class GUI extends JFrame {
     }
 
     private void runCommand() {
+        // 禁用按钮并更改文本
         runButton.setText("运行中");
         runButton.setEnabled(false);
 
+        // 清空控制台
         clearConsole();
 
         String inputDir = inputPathField.getText();
         String outputDir = outputPathField.getText();
 
-        if (validatePaths(inputDir, outputDir)) {
-            clearLogFile();
-
-            SwingWorker<Void, Void> worker = new SwingWorker<>() {
-                @Override
-                protected Void doInBackground() {
-                    processFiles(inputDir, outputDir);
-                    displayLogFile();
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-                    summarizeConsoleOutput();
-                    resetRunButton();
-                }
-            };
-            worker.execute();
-        } else {
-            resetRunButton();
-        }
-    }
-
-    private boolean validatePaths(String inputDir, String outputDir) {
         if (inputDir.isEmpty()) {
             JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
-            return false;
+            resetRunButton();
+            return;
         }
 
         if (!setOutputAsInputCheckBox.isSelected() && outputDir.isEmpty()) {
             JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
-            return false;
+            resetRunButton();
+            return;
         }
-        return true;
+
+        // 清除 UnLock.log 文件内容
+        clearLogFile();
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    processFiles(inputDir, outputDir);
+                    // 显示 UnLock.log 文件内容
+                    displayLogFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    console.append("处理文件时出错: " + e.getMessage() + "\n");
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // 查找“程序结束”字样
+                String consoleText = console.getText();
+                if (consoleText.contains("程序结束")) {
+                    int errorCount = countOccurrences(consoleText, "错误");
+                    int warningCount = countOccurrences(consoleText, "警告");
+                    int processedCount = countOccurrences(consoleText, "已处理");
+
+                    console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
+                }
+                resetRunButton();
+            }
+        };
+        worker.execute();
+    }
+
+    private int countOccurrences(String text, String word) {
+        Pattern pattern = Pattern.compile(word);
+        Matcher matcher = pattern.matcher(text);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        return count;
+    }
+
+    private void resetRunButton() {
+        runButton.setText("运行");
+        runButton.setEnabled(true);
     }
 
     private void clearConsole() {
@@ -274,37 +326,11 @@ public class GUI extends JFrame {
         try (BufferedReader reader = new BufferedReader(new FileReader("UnLock.log"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                console.append(line).append("\n");
+                console.append(line + "\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void summarizeConsoleOutput() {
-        String consoleText = console.getText();
-        if (consoleText.contains("程序结束")) {
-            int errorCount = countOccurrences(consoleText, "错误");
-            int warningCount = countOccurrences(consoleText, "警告");
-            int processedCount = countOccurrences(consoleText, "已处理");
-
-            console.append("处理结束\n错误数量: ").append(errorCount).append("\n警告数量: ").append(warningCount).append("\n已处理数量: ").append(processedCount).append("\n");
-        }
-    }
-
-    private int countOccurrences(String text, String word) {
-        Pattern pattern = Pattern.compile(word);
-        Matcher matcher = pattern.matcher(text);
-        int count = 0;
-        while (matcher.find()) {
-            count++;
-        }
-        return count;
-    }
-
-    private void resetRunButton() {
-        runButton.setText("运行");
-        runButton.setEnabled(true);
     }
 
     public static void main(String[] args) {
@@ -314,7 +340,7 @@ public class GUI extends JFrame {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(() -> {
-            GUI app = new GUI();
+            main app = new main();
             app.setVisible(true);
         });
     }
