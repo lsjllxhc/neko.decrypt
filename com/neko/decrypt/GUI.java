@@ -91,29 +91,29 @@ public class GUI extends JFrame {
         }
     }
 
- private void runCommand() {
-    String inputDir = inputPathField.getText();
-    String outputDir = outputPathField.getText();
+    private void runCommand() {
+        String inputDir = inputPathField.getText();
+        String outputDir = outputPathField.getText();
 
-    if (inputDir.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    // 清除 UnLock.log 文件内容
-    clearLogFile();
-
-    try {
-        if (!outputDir.isEmpty()) {
-            processFiles(inputDir, outputDir);
-            // 显示 UnLock.log 文件内容
-            displayLogFile();
+        if (inputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "处理文件时出错: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+
+        // 清除 UnLock.log 文件内容
+        clearLogFile();
+
+        try {
+            if (!outputDir.isEmpty()) {
+                processFiles(inputDir, outputDir);
+                // 显示 UnLock.log 文件内容
+                displayLogFile();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "处理文件时出错: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
     }
-}
 
     private void clearLogFile() {
         try (PrintWriter writer = new PrintWriter("UnLock.log")) {
@@ -135,6 +135,11 @@ public class GUI extends JFrame {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         SwingUtilities.invokeLater(() -> {
             GUI app = new GUI();
             app.setVisible(true);
