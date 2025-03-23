@@ -133,7 +133,43 @@ public class GUI extends JFrame {
     }
 
     private void showAboutDialog() {
-        JOptionPane.showMessageDialog(this, "2025.3.23-jdk21-windows-v0.6.0", "关于软件", JOptionPane.INFORMATION_MESSAGE);
+        JDialog aboutDialog = new JDialog(this, "关于软件", true);
+        aboutDialog.setSize(400, 300);
+        aboutDialog.setLayout(new BorderLayout());
+
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel titleLabel = new JLabel("Neko.UnLocker.Decrypt");
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(titleLabel);
+
+        JLabel versionLabel = new JLabel("版本: 2025.3.23-jdk21-windows-v0.6.0");
+        versionLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        versionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(versionLabel);
+
+        JLabel authorLabel = new JLabel("制作者: Histrem Rakik");
+        authorLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        authorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(authorLabel);
+
+        JLabel descriptionLabel = new JLabel("<html><body style='text-align: center;'>Neko.UnLocker.Decrypt 是一个用于解密文件的专业工具，<br>支持多种格式的文件解密。</body></html>");
+        descriptionLabel.setFont(new Font("Serif", Font.PLAIN, 14));
+        descriptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(descriptionLabel);
+
+        JButton closeButton = new JButton("关闭");
+        closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        closeButton.addActionListener(e -> aboutDialog.dispose());
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        contentPanel.add(closeButton);
+
+        aboutDialog.add(contentPanel, BorderLayout.CENTER);
+        aboutDialog.setLocationRelativeTo(this);
+        aboutDialog.setVisible(true);
     }
 
     private void showWelcomeDialog() {
