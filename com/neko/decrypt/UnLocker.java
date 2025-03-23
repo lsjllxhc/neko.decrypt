@@ -10,7 +10,6 @@ import java.nio.file.FileVisitor;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
 import static com.neko.decrypt.MMK.*;
 
 public class UnLocker {
@@ -29,6 +28,7 @@ public class UnLocker {
     }
 
     public static void processFiles(String inputDir, String outputDir) throws IOException {
+        logger.info("程序开始");
         Path srcPath = Path.of(inputDir);
         Path outPath = Path.of(outputDir);
 
@@ -47,6 +47,7 @@ public class UnLocker {
                 }
             }
         }
+        logger.info("程序结束");
     }
 
     public static void handleDiv(Path srcDiv, Path targetDiv, SecretKey secretKey) throws IOException {
