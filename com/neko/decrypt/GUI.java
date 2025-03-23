@@ -15,7 +15,7 @@ import static com.neko.decrypt.UnLocker.processFiles;
 public class GUI extends JFrame {
     private JTextField inputPathField;
     private JTextField outputPathField;
-    private JTextPane console;
+    private JTextArea console;
     private JButton runButton;
 
     public GUI() {
@@ -117,7 +117,7 @@ public class GUI extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        console = new JTextPane();
+        console = new JTextArea();
         console.setFont(new Font("Monospaced", Font.PLAIN, 12)); // 设置字体，确保支持中文字符
         console.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(console);
@@ -250,7 +250,7 @@ public class GUI extends JFrame {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appendToConsole("处理文件时出错: " + e.getMessage(), Color.RED);
+                    console.append("处理文件时出错: " + e.getMessage() + "\n");
                 }
                 return null;
             }
@@ -264,23 +264,12 @@ public class GUI extends JFrame {
                     int warningCount = countOccurrences(consoleText, "警告");
                     int processedCount = countOccurrences(consoleText, "已处理");
 
-                    appendToConsole("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount, Color.BLACK);
+                    console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
                 }
                 resetRunButton();
             }
         };
         worker.execute();
-    }
-
-    private void appendToConsole(String message, Color color) {
-        StyledDocument doc = console.getStyledDocument();
-        Style style = console.addStyle("Style", null);
-        StyleConstants.setForeground(style, color);
-        try {
-            doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
     }
 
     private int countOccurrences(String text, String word) {
@@ -314,15 +303,7 @@ public class GUI extends JFrame {
         try (BufferedReader reader = new BufferedReader(new FileReader("UnLock.log"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.contains("错误")) {
-                    appendToConsole(line, Color.RED);
-                } else if (line.contains("警告")) {
-                    appendToConsole(line, Color.YELLOW);
-                } else if (line.contains("已处理")) {
-                    appendToConsole(line, Color.GREEN);
-                } else {
-                    appendToConsole(line, Color.BLACK);
-                }
+                console.append(line + "\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
