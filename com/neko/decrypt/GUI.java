@@ -38,14 +38,6 @@ public class GUI extends JFrame {
             }
         });
 
-        // 设置窗口图标
-        File iconFile = new File("logo.ico");
-        if (iconFile.exists()) {
-            setIconImage(Toolkit.getDefaultToolkit().getImage("logo.ico"));
-        } else {
-            JOptionPane.showMessageDialog(this, "未找到ico文件", "警告", JOptionPane.WARNING_MESSAGE);
-        }
-
         // 创建菜单栏
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -252,6 +244,11 @@ public class GUI extends JFrame {
             protected Void doInBackground() throws Exception {
                 try {
                     if (!outputDir.isEmpty()) {
+                        // 模拟运行进度条
+                        for (int i = 0; i <= 100; i += 10) {
+                            Thread.sleep(500); // 模拟处理时间
+                            updateProgress(i);
+                        }
                         processFiles(inputDir, outputDir);
                         // 显示 UnLock.log 文件内容
                         displayLogFile();
@@ -280,6 +277,10 @@ public class GUI extends JFrame {
             }
         };
         worker.execute();
+    }
+
+    private void updateProgress(int percent) {
+        console.append("进度: " + percent + "%\n");
     }
 
     private int countOccurrences(String text, String word) {
