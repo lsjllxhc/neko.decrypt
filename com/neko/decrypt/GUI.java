@@ -157,7 +157,7 @@ public class GUI extends JFrame {
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    JLabel iconLabel = new JLabel(new ImageIcon("path/to/logo.ico"));
+    JLabel iconLabel = new JLabel(new ImageIcon("logo.ico"));
     iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     contentPanel.add(iconLabel);
 
