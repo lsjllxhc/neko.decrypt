@@ -17,8 +17,6 @@ public class GUI extends JFrame {
     private JTextField outputPathField;
     private JTextArea console;
     private JButton runButton;
-    private JDialog progressDialog;
-    private JProgressBar progressBar;
 
     public GUI() {
         setTitle("UnLocker");
@@ -127,9 +125,6 @@ public class GUI extends JFrame {
 
         // 显示欢迎对话框
         showWelcomeDialog();
-
-        // 初始化进度条对话框
-        initProgressDialog();
     }
 
     private void showAboutDialog() {
@@ -224,19 +219,6 @@ public class GUI extends JFrame {
         }
     }
 
-    private void initProgressDialog() {
-        progressDialog = new JDialog(this, "进度", true);
-        progressDialog.setSize(300, 100);
-        progressDialog.setLayout(new BorderLayout());
-
-        progressBar = new JProgressBar(0, 100);
-        progressBar.setValue(0);
-        progressBar.setStringPainted(true);
-
-        progressDialog.add(progressBar, BorderLayout.CENTER);
-        progressDialog.setLocationRelativeTo(this);
-    }
-
     private void runCommand() {
         // 禁用按钮并更改文本
         runButton.setText("运行中");
@@ -257,7 +239,18 @@ public class GUI extends JFrame {
         // 清除 UnLock.log 文件内容
         clearLogFile();
 
-        progressDialog.setVisible(true); // 显示进度条窗体
+        // 创建并显示进度条窗口
+        JDialog progressDialog = new JDialog(this, "进度", true);
+        progressDialog.setSize(300, 100);
+        progressDialog.setLayout(new BorderLayout());
+
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+
+        progressDialog.add(progressBar, BorderLayout.CENTER);
+        progressDialog.setLocationRelativeTo(this);
+        progressDialog.setVisible(true);
 
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
@@ -267,7 +260,7 @@ public class GUI extends JFrame {
                         // 模拟运行进度条
                         for (int i = 0; i <= 100; i += 10) {
                             Thread.sleep(500); // 模拟处理时间
-                            updateProgress(i);
+                            updateProgress(progressBar, i);
                         }
                         processFiles(inputDir, outputDir);
                         // 显示 UnLock.log 文件内容
@@ -294,14 +287,14 @@ public class GUI extends JFrame {
                             "处理结束", JOptionPane.INFORMATION_MESSAGE);
                 }
                 resetRunButton();
-                progressDialog.setVisible(false); // 隐藏进度条窗体
+                progressDialog.dispose(); // 隐藏并关闭进度条窗体
             }
         };
         worker.execute();
     }
 
-    private void updateProgress(int percent) {
-        progressBar.setValue(percent);
+    private void updateProgress(JProgressBar progressBar, int percent) {
+        SwingUtilities.invokeLater(() -> progressBar.setValue(percent));
     }
 
     private int countOccurrences(String text, String word) {
