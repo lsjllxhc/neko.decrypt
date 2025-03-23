@@ -23,7 +23,7 @@ public class UnLocker {
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
         } catch (IOException e) {
-            logger.severe("Failed to set up logger: " + e.getMessage());
+            logger.severe("设置logger失败: " + e.getMessage());
         }
     }
 
