@@ -10,10 +10,7 @@ import java.util.regex.Pattern;
 
 import com.neko.decrypt.UnLocker.*;
 
-import static com.neko.decrypt.UnLocker.processFiles;
-
-public class GUI extends JFrame {
-    private JTextField inputPathField;
+import static com.neko.decrypt.UnLocker private JTextField inputPathField;
     private JTextField outputPathField;
     private JTextArea console;
     private JButton runButton;
@@ -132,8 +129,8 @@ public class GUI extends JFrame {
         JScrollPane scrollPane = new JScrollPane(console);
         add(scrollPane, gbc);
 
-        // 显示欢迎对话框
-        showWelcomeDialog();
+        // 显示输入密钥对话框
+        showKeyInputDialog();
     }
 
     private void showAboutDialog() {
@@ -325,13 +322,32 @@ public class GUI extends JFrame {
     }
 
     private void displayLogFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("UnLock.log"))) {
+        try (BufferedReader reader = new BufferedReader(new"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 console.append(line + "\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void showKeyInputDialog() {
+        JPasswordField passwordField = new JPasswordField();
+        Object[] message = {
+            "请输入密钥:", passwordField
+        };
+        int option = JOptionPane.showConfirmDialog(this, message, "密钥验证", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            String inputKey = new String(passwordField.getPassword());
+            if ("mimikko".equals(inputKey)) {
+                JOptionPane.showMessageDialog(this, "密钥正确，进入程序。", "成功", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "密钥错误", "错误", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+        } else {
+            System.exit(0);
         }
     }
 
