@@ -45,12 +45,12 @@ public class GUI extends JFrame {
 
         // 打开输入文件夹菜单项
         JMenuItem openInputMenuItem = new JMenuItem("打开输入文件夹");
-        openInputMenuItem.addActionListener(e -> selectInputFolder());
+        openInputMenuItem.addActionListener(e -> openInputFolder());
         fileMenu.add(openInputMenuItem);
 
         // 打开输出文件夹菜单项
         JMenuItem openOutputMenuItem = new JMenuItem("打开输出文件夹");
-        openOutputMenuItem.addActionListener(e -> selectOutputFolder());
+        openOutputMenuItem.addActionListener(e -> openOutputFolder());
         fileMenu.add(openOutputMenuItem);
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -122,6 +122,8 @@ public class GUI extends JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             inputPathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        } else {
+            JOptionPane.showMessageDialog(this, "未选择输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -131,6 +133,26 @@ public class GUI extends JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             outputPathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        } else {
+            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void openInputFolder() {
+        String inputDir = inputPathField.getText();
+        if (inputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "未选择输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        } else {
+            // 打开输入文件夹的逻辑
+        }
+    }
+
+    private void openOutputFolder() {
+        String outputDir = outputPathField.getText();
+        if (outputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        } else {
+            // 打开输出文件夹的逻辑
         }
     }
 
