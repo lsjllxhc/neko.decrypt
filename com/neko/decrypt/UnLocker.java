@@ -40,10 +40,10 @@ public class UnLocker {
                     SecretKey secretKey = getSecretKey(path);
                     if (secretKey == null)
                         continue;
-                    logger.info("Processing: " + path + " " + secretKey);
+                    logger.info("已处理: " + path + " " + secretKey);
                     handleDiv(path, outPath, secretKey);
                 } catch (Exception e) {
-                    logger.severe("Error: " + path + " -> " + e.getMessage());
+                    logger.severe("错误: " + path + " -> " + e.getMessage());
                 }
             }
         }
@@ -73,7 +73,7 @@ public class UnLocker {
                         default -> {
                             byte[] data = secretKey.aes(Files.readAllBytes(file));
                             if (data == null) {
-                                logger.warning("Warn: " + file + " Unable to decrypt this file");
+                                logger.warning("警告: " + file + "无法解密此文件");
                                 break;
                             }
                             Files.write(target, data);
@@ -143,7 +143,7 @@ public class UnLocker {
         } else if (files[2] != null) {
             return MMK.SecretKey.getFromMp4(Files.readAllBytes(files[2]));
         } else {
-            throw new RuntimeException("Unable to judge");
+            throw new RuntimeException("无法判断");
         }
     }
 }
