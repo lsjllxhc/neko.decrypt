@@ -75,6 +75,11 @@ public class GUI extends JFrame {
         aboutMenuItem.addActionListener(e -> showAboutDialog());
         helpMenu.add(aboutMenuItem);
 
+        // 许可证菜单项
+        JMenuItem licenseMenuItem = new JMenuItem("许可证");
+        licenseMenuItem.addActionListener(e -> showLicenseDialog());
+        helpMenu.add(licenseMenuItem);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -178,6 +183,36 @@ public class GUI extends JFrame {
         aboutDialog.add(contentPanel, BorderLayout.CENTER);
         aboutDialog.setLocationRelativeTo(this);
         aboutDialog.setVisible(true);
+    }
+
+    private void showLicenseDialog() {
+        JDialog licenseDialog = new JDialog(this, "许可证", true);
+        licenseDialog.setSize(600, 400);
+        licenseDialog.setLayout(new BorderLayout());
+
+        JTextArea licenseTextArea = new JTextArea();
+        licenseTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        licenseTextArea.setEditable(false);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("LICENSE"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                licenseTextArea.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            licenseTextArea.setText("无法加载许可证文件。");
+        }
+
+        JScrollPane scrollPane = new JScrollPane(licenseTextArea);
+        licenseDialog.add(scrollPane, BorderLayout.CENTER);
+
+        JButton closeButton = new JButton("关闭");
+        closeButton.addActionListener(e -> licenseDialog.dispose());
+        licenseDialog.add(closeButton, BorderLayout.SOUTH);
+
+        licenseDialog.setLocationRelativeTo(this);
+        licenseDialog.setVisible(true);
     }
 
     private void showWelcomeDialog() {
