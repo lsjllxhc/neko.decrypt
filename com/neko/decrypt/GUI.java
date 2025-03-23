@@ -5,6 +5,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.neko.decrypt.UnLocker.*;
 
@@ -14,6 +16,7 @@ public class GUI extends JFrame {
     private JTextField inputPathField;
     private JTextField outputPathField;
     private JTextArea console;
+    private JButton runButton;
 
     public GUI() {
         setTitle("UnLocker");
@@ -113,7 +116,7 @@ public class GUI extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 3;
-        JButton runButton = new JButton("运行");
+        runButton = new JButton("运行");
         runButton.addActionListener(e -> runCommand());
         add(runButton, gbc);
 
@@ -225,6 +228,10 @@ public class GUI extends JFrame {
     }
 
     private void runCommand() {
+        // 禁用按钮并更改文本
+        runButton.setText("运行中");
+        runButton.setEnabled(false);
+
         // 清空控制台
         clearConsole();
 
@@ -233,22 +240,61 @@ public class GUI extends JFrame {
 
         if (inputDir.isEmpty()) {
             JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+            resetRunButton();
             return;
         }
 
         // 清除 UnLock.log 文件内容
         clearLogFile();
 
-        try {
-            if (!outputDir.isEmpty()) {
-                processFiles(inputDir, outputDir);
-                // 显示 UnLock.log 文件内容
-                displayLogFile();
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    if (!outputDir.isEmpty()) {
+                        processFiles(inputDir, outputDir);
+                        // 显示 UnLock.log 文件内容
+                        displayLogFile();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(GUI.this, "处理文件时出错: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+                }
+                return null;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "处理文件时出错: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+
+            @Override
+            protected void done() {
+                // 查找“程序结束”字样
+                String consoleText = console.getText();
+                if (consoleText.contains("程序结束")) {
+                    int errorCount = countOccurrences(consoleText, "错误");
+                    int warningCount = countOccurrences(consoleText, "警告");
+                    int processedCount = countOccurrences(consoleText, "已处理");
+
+                    JOptionPane.showMessageDialog(GUI.this, 
+                        "处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount, 
+                        "处理结束", JOptionPane.INFORMATION_MESSAGE);
+                }
+                resetRunButton();
+            }
+        };
+        worker.execute();
+    }
+
+    private int countOccurrences(String text, String word) {
+        Pattern pattern = Pattern.compile(word);
+        Matcher matcher = pattern.matcher(text);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
         }
+        return count;
+    }
+
+    private void resetRunButton() {
+        runButton.setText("运行");
+        runButton.setEnabled(true);
     }
 
     private void clearConsole() {
