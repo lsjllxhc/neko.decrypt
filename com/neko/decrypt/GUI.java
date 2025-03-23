@@ -2,6 +2,7 @@ package com.neko.decrypt;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -20,6 +21,37 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
+
+        // 设置窗口图标
+        File iconFile = new File("logo.ico");
+        if (iconFile.exists()) {
+            setIconImage(Toolkit.getDefaultToolkit().getImage("logo.ico"));
+        } else {
+            JOptionPane.showMessageDialog(this, "未找到ico文件", "警告", JOptionPane.WARNING_MESSAGE);
+        }
+
+        // 创建菜单栏
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+
+        // 创建“文件”菜单
+        JMenu fileMenu = new JMenu("文件");
+        menuBar.add(fileMenu);
+
+        // 关于软件菜单项
+        JMenuItem aboutMenuItem = new JMenuItem("关于软件");
+        aboutMenuItem.addActionListener(e -> showAboutDialog());
+        fileMenu.add(aboutMenuItem);
+
+        // 打开输入文件夹菜单项
+        JMenuItem openInputMenuItem = new JMenuItem("打开输入文件夹");
+        openInputMenuItem.addActionListener(e -> selectInputFolder());
+        fileMenu.add(openInputMenuItem);
+
+        // 打开输出文件夹菜单项
+        JMenuItem openOutputMenuItem = new JMenuItem("打开输出文件夹");
+        openOutputMenuItem.addActionListener(e -> selectOutputFolder());
+        fileMenu.add(openOutputMenuItem);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -71,6 +103,17 @@ public class GUI extends JFrame {
         console.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(console);
         add(scrollPane, gbc);
+
+        // 显示欢迎对话框
+        showWelcomeDialog();
+    }
+
+    private void showAboutDialog() {
+        JOptionPane.showMessageDialog(this, "2025.3.23-jdk21-windows-v0.6.0", "关于软件", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showWelcomeDialog() {
+        JOptionPane.showMessageDialog(this, "欢迎使用Neko.UnLocker.Decrypt,制作者Histrem Rakik。", "欢迎", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void selectInputFolder() {
