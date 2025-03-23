@@ -239,29 +239,11 @@ public class GUI extends JFrame {
         // 清除 UnLock.log 文件内容
         clearLogFile();
 
-        // 创建并显示进度条窗口
-        JDialog progressDialog = new JDialog(this, "进度", true);
-        progressDialog.setSize(300, 100);
-        progressDialog.setLayout(new BorderLayout());
-
-        JProgressBar progressBar = new JProgressBar(0, 100);
-        progressBar.setValue(0);
-        progressBar.setStringPainted(true);
-
-        progressDialog.add(progressBar, BorderLayout.CENTER);
-        progressDialog.setLocationRelativeTo(this);
-        progressDialog.setVisible(true);
-
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
                 try {
                     if (!outputDir.isEmpty()) {
-                        // 模拟运行进度条
-                        for (int i = 0; i <= 100; i += 10) {
-                            Thread.sleep(500); // 模拟处理时间
-                            updateProgress(progressBar, i);
-                        }
                         processFiles(inputDir, outputDir);
                         // 显示 UnLock.log 文件内容
                         displayLogFile();
@@ -287,14 +269,9 @@ public class GUI extends JFrame {
                             "处理结束", JOptionPane.INFORMATION_MESSAGE);
                 }
                 resetRunButton();
-                progressDialog.dispose(); // 隐藏并关闭进度条窗体
             }
         };
         worker.execute();
-    }
-
-    private void updateProgress(JProgressBar progressBar, int percent) {
-        SwingUtilities.invokeLater(() -> progressBar.setValue(percent));
     }
 
     private int countOccurrences(String text, String word) {
