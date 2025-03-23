@@ -76,8 +76,8 @@ public class GUI extends JFrame {
         add(inputPathField, gbc);
 
         gbc.gridx = 2;
-        JButton inputButton = new JButton("...");
-        inputButton.setPreferredSize(new Dimension(30, 30)); // 设置为正方形
+        JButton inputButton = new JButton("选择");
+        inputButton.setPreferredSize(new Dimension(60, 30)); // 设置为合适的大小
         inputButton.addActionListener(e -> selectInputFolder());
         add(inputButton, gbc);
 
@@ -91,8 +91,8 @@ public class GUI extends JFrame {
         add(outputPathField, gbc);
 
         gbc.gridx = 2;
-        JButton outputButton = new JButton("...");
-        outputButton.setPreferredSize(new Dimension(30, 30)); // 设置为正方形
+        JButton outputButton = new JButton("选择");
+        outputButton.setPreferredSize(new Dimension(60, 30)); // 设置为合适的大小
         outputButton.addActionListener(e -> selectOutputFolder());
         add(outputButton, gbc);
 
@@ -154,7 +154,11 @@ public class GUI extends JFrame {
         if (inputDir.isEmpty()) {
             JOptionPane.showMessageDialog(this, "未选择输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         } else {
-            // 打开输入文件夹的逻辑
+            try {
+                Desktop.getDesktop().open(new File(inputDir));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "无法打开输入文件夹", "错误", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -163,7 +167,11 @@ public class GUI extends JFrame {
         if (outputDir.isEmpty()) {
             JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         } else {
-            // 打开输出文件夹的逻辑
+            try {
+                Desktop.getDesktop().open(new File(outputDir));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "无法打开输出文件夹", "错误", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
