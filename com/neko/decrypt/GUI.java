@@ -17,6 +17,7 @@ public class GUI extends JFrame {
     private JTextField outputPathField;
     private JTextArea console;
     private JButton runButton;
+    private JCheckBox setOutputAsInputCheckBox;
 
     public GUI() {
         setTitle("UnLocker");
@@ -104,9 +105,17 @@ public class GUI extends JFrame {
         outputButton.addActionListener(e -> selectOutputFolder());
         add(outputButton, gbc);
 
-        // 运行按钮
+        // 设置输出文件夹为输入文件夹复选框
         gbc.gridx = 0;
         gbc.gridy = 2;
+        gbc.gridwidth = 3;
+        setOutputAsInputCheckBox = new JCheckBox("设置输出文件夹为输入文件夹");
+        setOutputAsInputCheckBox.addActionListener(e -> toggleOutputAsInput());
+        add(setOutputAsInputCheckBox, gbc);
+
+        // 运行按钮
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.gridwidth = 3;
         runButton = new JButton("运行");
         runButton.addActionListener(e -> runCommand());
@@ -177,6 +186,9 @@ public class GUI extends JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             inputPathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            if (setOutputAsInputCheckBox.isSelected()) {
+                outputPathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+            }
         } else {
             JOptionPane.showMessageDialog(this, "未选择输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         }
@@ -219,6 +231,15 @@ public class GUI extends JFrame {
         }
     }
 
+    private void toggleOutputAsInput() {
+        if (setOutputAsInputCheckBox.isSelected()) {
+            outputPathField.setText(inputPathField.getText());
+            outputPathField.setEnabled(false);
+        } else {
+            outputPathField.setEnabled(true);
+        }
+    }
+
     private void runCommand() {
         // 禁用按钮并更改文本
         runButton.setText("运行中");
@@ -236,6 +257,12 @@ public class GUI extends JFrame {
             return;
         }
 
+        if (!setOutputAsInputCheckBox.isSelected() && outputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+            resetRunButton();
+            return;
+        }
+
         // 清除 UnLock.log 文件内容
         clearLogFile();
 
@@ -243,11 +270,9 @@ public class GUI extends JFrame {
             @Override
             protected Void doInBackground() throws Exception {
                 try {
-                    if (!outputDir.isEmpty()) {
-                        processFiles(inputDir, outputDir);
-                        // 显示 UnLock.log 文件内容
-                        displayLogFile();
-                    }
+                    processFiles(inputDir, outputDir);
+                    // 显示 UnLock.log 文件内容
+                    displayLogFile();
                 } catch (Exception e) {
                     e.printStackTrace();
                     console.append("处理文件时出错: " + e.getMessage() + "\n");
