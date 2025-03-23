@@ -67,7 +67,8 @@ public class GUI extends JFrame {
         add(inputPathField, gbc);
 
         gbc.gridx = 2;
-        JButton inputButton = new JButton("选择");
+        JButton inputButton = new JButton("...");
+        inputButton.setPreferredSize(new Dimension(30, 30)); // 设置为正方形
         inputButton.addActionListener(e -> selectInputFolder());
         add(inputButton, gbc);
 
@@ -81,7 +82,8 @@ public class GUI extends JFrame {
         add(outputPathField, gbc);
 
         gbc.gridx = 2;
-        JButton outputButton = new JButton("选择");
+        JButton outputButton = new JButton("...");
+        outputButton.setPreferredSize(new Dimension(30, 30)); // 设置为正方形
         outputButton.addActionListener(e -> selectOutputFolder());
         add(outputButton, gbc);
 
