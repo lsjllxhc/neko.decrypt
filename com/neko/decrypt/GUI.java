@@ -18,9 +18,22 @@ public class GUI extends JFrame {
     public GUI() {
         setTitle("UnLocker");
         setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // 设置为不进行任何操作
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
+
+        // 添加窗口监听器
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (JOptionPane.showConfirmDialog(GUI.this, 
+                    "您确定要关闭窗口吗?", "确认关闭", 
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                    System.exit(0);
+                }
+            }
+        });
 
         // 设置窗口图标
         File iconFile = new File("logo.ico");
