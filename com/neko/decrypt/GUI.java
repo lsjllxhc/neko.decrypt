@@ -17,6 +17,8 @@ public class GUI extends JFrame {
     private JTextField outputPathField;
     private JTextArea console;
     private JButton runButton;
+    private JDialog progressDialog;
+    private JProgressBar progressBar;
 
     public GUI() {
         setTitle("UnLocker");
@@ -29,10 +31,10 @@ public class GUI extends JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (JOptionPane.showConfirmDialog(GUI.this, 
-                    "您确定要关闭窗口吗?", "确认关闭", 
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                if (JOptionPane.showConfirmDialog(GUI.this,
+                        "您确定要关闭窗口吗?", "确认关闭",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }
             }
@@ -125,6 +127,9 @@ public class GUI extends JFrame {
 
         // 显示欢迎对话框
         showWelcomeDialog();
+
+        // 初始化进度条对话框
+        initProgressDialog();
     }
 
     private void showAboutDialog() {
@@ -219,6 +224,19 @@ public class GUI extends JFrame {
         }
     }
 
+    private void initProgressDialog() {
+        progressDialog = new JDialog(this, "进度", true);
+        progressDialog.setSize(300, 100);
+        progressDialog.setLayout(new BorderLayout());
+
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+
+        progressDialog.add(progressBar, BorderLayout.CENTER);
+        progressDialog.setLocationRelativeTo(this);
+    }
+
     private void runCommand() {
         // 禁用按钮并更改文本
         runButton.setText("运行中");
@@ -238,6 +256,8 @@ public class GUI extends JFrame {
 
         // 清除 UnLock.log 文件内容
         clearLogFile();
+
+        progressDialog.setVisible(true); // 显示进度条窗体
 
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
@@ -269,18 +289,19 @@ public class GUI extends JFrame {
                     int warningCount = countOccurrences(consoleText, "警告");
                     int processedCount = countOccurrences(consoleText, "已处理");
 
-                    JOptionPane.showMessageDialog(GUI.this, 
-                        "处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount, 
-                        "处理结束", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(GUI.this,
+                            "处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount,
+                            "处理结束", JOptionPane.INFORMATION_MESSAGE);
                 }
                 resetRunButton();
+                progressDialog.setVisible(false); // 隐藏进度条窗体
             }
         };
         worker.execute();
     }
 
     private void updateProgress(int percent) {
-        console.append("进度: " + percent + "%\n");
+        progressBar.setValue(percent);
     }
 
     private int countOccurrences(String text, String word) {
