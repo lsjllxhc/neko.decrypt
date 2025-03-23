@@ -26,6 +26,9 @@ public class GUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
 
+        // 设置程序图标
+        setIconImage(Toolkit.getDefaultToolkit().getImage("logo.ico"));
+
         // 添加窗口监听器
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
