@@ -53,6 +53,15 @@ public class GUI extends JFrame {
         openOutputMenuItem.addActionListener(e -> openOutputFolder());
         fileMenu.add(openOutputMenuItem);
 
+        // 创建“控制台”菜单
+        JMenu consoleMenu = new JMenu("控制台");
+        menuBar.add(consoleMenu);
+
+        // 清空控制台菜单项
+        JMenuItem clearConsoleMenuItem = new JMenuItem("清空");
+        clearConsoleMenuItem.addActionListener(e -> clearConsole());
+        consoleMenu.add(clearConsoleMenuItem);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -159,6 +168,9 @@ public class GUI extends JFrame {
     }
 
     private void runCommand() {
+        // 清空控制台
+        clearConsole();
+
         String inputDir = inputPathField.getText();
         String outputDir = outputPathField.getText();
 
@@ -180,6 +192,10 @@ public class GUI extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "处理文件时出错: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void clearConsole() {
+        console.setText("");
     }
 
     private void clearLogFile() {
