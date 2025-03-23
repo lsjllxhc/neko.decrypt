@@ -132,8 +132,8 @@ public class GUI extends JFrame {
         JScrollPane scrollPane = new JScrollPane(console);
         add(scrollPane, gbc);
 
-        // 显示输入密钥对话框
-        showKeyInputDialog();
+        // 显示欢迎对话框
+        showWelcomeDialog();
     }
 
     private void showAboutDialog() {
@@ -332,25 +332,6 @@ public class GUI extends JFrame {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void showKeyInputDialog() {
-        JPasswordField passwordField = new JPasswordField();
-        Object[] message = {
-            "请输入密钥:", passwordField
-        };
-        int option = JOptionPane.showConfirmDialog(this, message, "密钥验证", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String inputKey = new String(passwordField.getPassword());
-            if ("mimikko".equals(inputKey)) {
-                JOptionPane.showMessageDialog(this, "密钥正确，进入程序。", "成功", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "密钥错误", "错误", JOptionPane.ERROR_MESSAGE);
-                System.exit(0);
-            }
-        } else {
-            System.exit(0);
         }
     }
 
