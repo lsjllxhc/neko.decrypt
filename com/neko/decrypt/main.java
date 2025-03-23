@@ -8,7 +8,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.neko.decrypt.UnLocker.processFiles;
+package com.neko.decrypt;
+
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.util.stream.Stream;
+import java.io.IOException;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class main extends JFrame {
     private JTextField inputPathField;
