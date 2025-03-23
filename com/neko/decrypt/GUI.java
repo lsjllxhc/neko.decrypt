@@ -27,7 +27,9 @@ public class GUI extends JFrame {
         setLayout(new GridBagLayout());
 
         // 设置程序图标
-        setIconImage(Toolkit.getDefaultToolkit().getImage("logo.ico"));
+        String iconPath = "logo.ico";
+        System.out.println("Icon path: " + new File(iconPath).getAbsolutePath());
+        setIconImage(Toolkit.getDefaultToolkit().getImage(iconPath));
 
         // 添加窗口监听器
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -131,11 +133,7 @@ public class GUI extends JFrame {
         gbc.gridwidth = 3;
         runButton = new JButton("运行");
         runButton.addActionListener(e -> runCommand());
-        add(runButton, gbc);
-
-        // 控制台
-        gbc.gridy = 4;
-        gbc.fill = GridBagConstraints.BOTH;
+        add(runButton, gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1;
         gbc.weighty = 1;
         console = new JTextArea();
@@ -308,7 +306,7 @@ public class GUI extends JFrame {
         // 清除 UnLock.log 文件内容
         clearLogFile();
 
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+        SwingWorker<Void, Void = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
                 try {
