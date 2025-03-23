@@ -47,11 +47,6 @@ public class GUI extends JFrame {
         JMenu fileMenu = new JMenu("文件");
         menuBar.add(fileMenu);
 
-        // 关于软件菜单项
-        JMenuItem aboutMenuItem = new JMenuItem("关于软件");
-        aboutMenuItem.addActionListener(e -> showAboutDialog());
-        fileMenu.add(aboutMenuItem);
-
         // 打开输入文件夹菜单项
         JMenuItem openInputMenuItem = new JMenuItem("打开输入文件夹");
         openInputMenuItem.addActionListener(e -> openInputFolder());
@@ -70,6 +65,15 @@ public class GUI extends JFrame {
         JMenuItem clearConsoleMenuItem = new JMenuItem("清空");
         clearConsoleMenuItem.addActionListener(e -> clearConsole());
         consoleMenu.add(clearConsoleMenuItem);
+
+        // 创建“帮助”菜单
+        JMenu helpMenu = new JMenu("帮助");
+        menuBar.add(helpMenu);
+
+        // 关于软件菜单项
+        JMenuItem aboutMenuItem = new JMenuItem("关于软件");
+        aboutMenuItem.addActionListener(e -> showAboutDialog());
+        helpMenu.add(aboutMenuItem);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
