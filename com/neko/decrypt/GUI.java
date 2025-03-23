@@ -10,7 +10,10 @@ import java.util.regex.Pattern;
 
 import com.neko.decrypt.UnLocker.*;
 
-import static com.neko.decrypt.UnLocker private JTextField inputPathField;
+import static com.neko.decrypt.UnLocker.processFiles;
+
+public class GUI extends JFrame {
+    private JTextField inputPathField;
     private JTextField outputPathField;
     private JTextArea console;
     private JButton runButton;
@@ -322,7 +325,7 @@ import static com.neko.decrypt.UnLocker private JTextField inputPathField;
     }
 
     private void displayLogFile() {
-        try (BufferedReader reader = new BufferedReader(new"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("UnLock.log"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 console.append(line + "\n");
