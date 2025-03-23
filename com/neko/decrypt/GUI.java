@@ -26,6 +26,9 @@ public class GUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
 
+        // 设置程序图标
+        setIconImage(Toolkit.getDefaultToolkit().getImage("logo.ico"));
+
         // 添加窗口监听器
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -154,11 +157,6 @@ public class GUI extends JFrame {
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // 添加图标
-        JLabel iconLabel = new JLabel(new ImageIcon("logo.ico"));
-        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(iconLabel);
-
         JLabel titleLabel = new JLabel("Neko.UnLocker.Decrypt");
         titleLabel.setFont(new Font("Serif", Font.BOLD, 18));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -279,12 +277,115 @@ public class GUI extends JFrame {
         if (setOutputAsInputCheckBox.isSelected()) {
             outputPathField.setText(inputPathField.getText());
             outputPathField.setEnabled(false);
-        } implementation
+        } else {
+            outputPathField.setEnabled(true);
+        }
+    }
+
+    private void runCommand() {
+        // 禁用按钮并更改文本
+        runButton.setText("运行中");
+        runButton.setEnabled(false);
+
+        // 清空控制台
+        clearConsole();
+
+        String inputDir = inputPathField.getText();
+        String outputDir = outputPathField.getText();
+
+        if (inputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+            resetRunButton();
+            return;
+        }
+
+        if (!setOutputAsInputCheckBox.isSelected() && outputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+            resetRunButton();
+            return;
+        }
+
+        // 清除 UnLock.log 文件内容
+        clearLogFile();
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    processFiles(inputDir, outputDir);
+                    // 显示 UnLock.log 文件内容
+                    displayLogFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    console.append("处理文件时出错: " + e.getMessage() + "\n");
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // 查找“程序结束”字样
+                String consoleText = console.getText();
+                if (consoleText.contains("程序结束")) {
+                    int errorCount = countOccurrences(consoleText, "错误");
+                    int warningCount = countOccurrences(consoleText, "警告");
+                    int processedCount = countOccurrences(consoleText, "已处理");
+
+                    console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
+                }
+                resetRunButton();
+            }
+        };
+        worker.execute();
+    }
+
+    private int countOccurrences(String text, String word) {
+        Pattern pattern = Pattern.compile(word);
+        Matcher matcher = pattern.matcher(text);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        return count;
+    }
+
+    private void resetRunButton() {
+        runButton.setText("运行");
+        runButton.setEnabled(true);
     }
 
     private void clearConsole() {
         console.setText("");
     }
 
-    // Add other methods as needed
+    private void clearLogFile() {
+        try (PrintWriter writer = new PrintWriter("UnLock.log")) {
+            writer.print("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayLogFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("UnLock.log"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                console.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        SwingUtilities.invokeLater(() -> {
+            GUI app = new GUI();
+            app.setVisible(true);
+        });
+    }
 }
