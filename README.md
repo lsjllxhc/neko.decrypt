@@ -1,2 +1,2 @@
 # neko.decrypt
-[logo] !(/logo.ico)
+![logo] (/logo.ico)
