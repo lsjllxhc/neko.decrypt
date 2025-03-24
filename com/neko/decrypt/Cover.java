@@ -3,19 +3,15 @@ package com.neko.decrypt;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class FileMover {
-    private static final Logger LOGGER = Logger.getLogger(FileMover.class.getName());
+public class Cover {
 
     public static void coverDir(Path srcPath, Path outPath) {
         try {
             moveFiles(srcPath, outPath);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error covering directory", e);
+
         }
     }
 
@@ -27,37 +23,36 @@ public class FileMover {
         moveDirectoryContents(outPath, srcPath);
 
         // 删除outPath文件夹
-        Files.deleteIfExists(outPath);
+        Files.delete(outPath);
     }
 
     private static void deleteDirectoryContents(Path path) throws IOException {
         if (Files.exists(path)) {
             Files.walk(path)
-                .sorted(Comparator.reverseOrder()) // 先删除子文件/文件夹
-                .forEach(p -> {
-                    try {
-                        Files.delete(p);
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "Error deleting file: " + p, e);
-                    }
-                });
+                    .sorted(Comparator.reverseOrder()) // 先删除子文件/文件夹
+                    .forEach(p -> {
+                        try {
+                            Files.delete(p);
+                        }
+                        catch (IOException e) {
+
+                        }
+                    });
         }
     }
 
     private static void moveDirectoryContents(Path srcDir, Path destDir) throws IOException {
         if (Files.exists(srcDir)) {
             Files.walk(srcDir)
-                .forEach(src -> {
-                    Path dest = destDir.resolve(srcDir.relativize(src));
-                    try {
-                        if (Files.exists(dest)) {
-                            LOGGER.log(Level.WARNING, "Target file already exists: " + dest);
+                    .forEach(src -> {
+                        Path dest = destDir.resolve(srcDir.relativize(src));
+                        try {
+                            Files.move(src, dest);
                         }
-                        Files.move(src, dest);
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "Error moving file: " + src + " to " + dest, e);
-                    }
-                });
+                        catch (IOException e) {
+
+                        }
+                    });
         }
     }
 }
