@@ -287,14 +287,19 @@ public class GUI extends JFrame {
         }
     }
 
-    private void toggleOutputAsInput() {
-        if (setOutputAsInputCheckBox.isSelected()) {
-            outputPathField.setText(inputPathField.getText());
-            outputPathField.setEnabled(false);
-        } else {
-            outputPathField.setEnabled(true);
-        }
+    // 修改toggleOutputAsInput方法
+private void toggleOutputAsInput() {
+    if (setOutputAsInputCheckBox.isSelected()) {
+        outputPathField.setText(inputPathField.getText());
+        outputPathField.setEnabled(false);
+        overwriteCheckBox.setEnabled(true); // 启用“是否覆盖”复选框
+    } else {
+        outputPathField.setEnabled(true);
+        overwriteCheckBox.setEnabled(false); // 禁用“是否覆盖”复选框
+        overwriteCheckBox.setSelected(false); // 取消选中状态
+        isCoverage = false;
     }
+}
 
     private void runCommand() {
         // 禁用按钮并更改文本
