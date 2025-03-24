@@ -1,1 +1,1 @@
-<img src="http://101.37.163.43/logo.png" sytle="width: 100px;"/>
+<img src="http://101.37.163.43/logo.png" sytle="width: 50px;"/>
