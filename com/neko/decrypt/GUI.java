@@ -18,6 +18,7 @@ public class GUI extends JFrame {
     private JTextArea console;
     private JButton runButton;
     private JCheckBox setOutputAsInputCheckBox;
+    private boolean isCoverage = false;
 
     public GUI() {
         setTitle("UnLocker");
