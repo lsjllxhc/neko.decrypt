@@ -117,7 +117,7 @@ public class GUI extends JFrame {
         outputButton.addActionListener(e -> selectOutputFolder());
         add(outputButton, gbc);
 
-        // 设置输出文件夹为输入文件夹复选框
+        // 输出目录与源相同复选框
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 3;
