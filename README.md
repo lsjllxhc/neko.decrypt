@@ -31,4 +31,4 @@
 - 先装java（废话
 - 自己输入' java -jar programname.jar --help '查看指令
 
-#遵循
+# 遵循 GPL-3.0
