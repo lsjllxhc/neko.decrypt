@@ -301,62 +301,66 @@ private void toggleOutputAsInput() {
     }
 }
 
-    private void runCommand() {
-        // 禁用按钮并更改文本
-        runButton.setText("运行中");
-        runButton.setEnabled(false);
+    // 修改runCommand方法，确保isCoverage变量的正确值
+private void runCommand() {
+    // 禁用按钮并更改文本
+    runButton.setText("运行中");
+    runButton.setEnabled(false);
 
-        // 清空控制台
-        clearConsole();
+    // 清空控制台
+    clearConsole();
 
-        String inputDir = inputPathField.getText();
-        String outputDir = outputPathField.getText();
+    String inputDir = inputPathField.getText();
+    String outputDir = outputPathField.getText();
 
-        if (inputDir.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
-            resetRunButton();
-            return;
-        }
-
-        if (!setOutputAsInputCheckBox.isSelected() && outputDir.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
-            resetRunButton();
-            return;
-        }
-
-        // 清除 UnLock.log 文件内容
-        clearLogFile();
-
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                try {
-                    processFiles(inputDir, outputDir, isCoverage);
-                    // 显示 UnLock.log 文件内容
-                    displayLogFile();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    console.append("处理文件时出错: " + e.getMessage() + "\n");
-                }
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                // 查找“程序结束”字样
-                String consoleText = console.getText();
-                if (consoleText.contains("程序结束")) {
-                    int errorCount = countOccurrences(consoleText, "错误");
-                    int warningCount = countOccurrences(consoleText, "警告");
-                    int processedCount = countOccurrences(consoleText, "已处理");
-
-                    console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
-                }
-                resetRunButton();
-            }
-        };
-        worker.execute();
+    if (inputDir.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        resetRunButton();
+        return;
     }
+
+    if (!setOutputAsInputCheckBox.isSelected() && outputDir.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+        resetRunButton();
+        return;
+    }
+
+    // 清除 UnLock.log 文件内容
+    clearLogFile();
+
+    // 获取是否覆盖的状态
+    isCoverage = overwriteCheckBox.isSelected();
+
+    SwingWorker<Void, Void> worker = new SwingWorker<>() {
+        @Override
+        protected Void doInBackground() throws Exception {
+            try {
+                processFiles(inputDir, outputDir, isCoverage);
+                // 显示 UnLock.log 文件内容
+                displayLogFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+                console.append("处理文件时出错: " + e.getMessage() + "\n");
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            // 查找“程序结束”字样
+            String consoleText = console.getText();
+            if (consoleText.contains("程序结束")) {
+                int errorCount = countOccurrences(consoleText, "错误");
+                int warningCount = countOccurrences(consoleText, "警告");
+                int processedCount = countOccurrences(consoleText, "已处理");
+
+                console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
+            }
+            resetRunButton();
+        }
+    };
+    worker.execute();
+}
 
     private int countOccurrences(String text, String word) {
         Pattern pattern = Pattern.compile(word);
