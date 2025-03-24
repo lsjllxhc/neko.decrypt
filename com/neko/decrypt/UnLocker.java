@@ -27,7 +27,7 @@ public class UnLocker {
         }
     }
 
-    public static void processFiles(String inputDir, String outputDir, Bool isCoverage) throws IOException {
+    public static void processFiles(String inputDir, String outputDir, boolean isCoverage) throws IOException {
         logger.info("程序开始");
         Path srcPath = Path.of(inputDir);
         Path outPath = Path.of(outputDir);
