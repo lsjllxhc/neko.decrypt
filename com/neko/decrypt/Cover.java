@@ -21,6 +21,8 @@ public class Cover{
                     });
             }
         }
-    Files.move(outPath, srcPath);
+        if (Files.exists(outPath)) {
+            try (Stream<Path> walk = Files.walk(outPath)) {
+            walk.sorted
     }
 }
