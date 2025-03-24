@@ -11,7 +11,7 @@ public class Cover {
         try {
             moveFiles(srcPath, outPath);
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -23,7 +23,9 @@ public class Cover {
         moveDirectoryContents(outPath, srcPath);
 
         // 删除outPath文件夹
-        Files.delete(outPath);
+        if (Files.exists(outPath)) {
+            Files.delete(outPath);
+        }
     }
 
     private static void deleteDirectoryContents(Path path) throws IOException {
@@ -33,9 +35,8 @@ public class Cover {
                     .forEach(p -> {
                         try {
                             Files.delete(p);
-                        }
-                        catch (IOException e) {
-
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     });
         }
@@ -48,9 +49,8 @@ public class Cover {
                         Path dest = destDir.resolve(srcDir.relativize(src));
                         try {
                             Files.move(src, dest);
-                        }
-                        catch (IOException e) {
-
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     });
         }
