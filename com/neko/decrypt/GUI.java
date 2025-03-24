@@ -18,6 +18,7 @@ public class GUI extends JFrame {
     private JTextArea console;
     private JButton runButton;
     private JCheckBox setOutputAsInputCheckBox;
+    private JCheckBox overwriteCheckBox;
     private boolean isCoverage = false;
 
     public GUI() {
@@ -118,33 +119,33 @@ public class GUI extends JFrame {
         outputButton.addActionListener(e -> selectOutputFolder());
         add(outputButton, gbc);
 
-            // 输出目录与源相同复选框
-    gbc.gridx = 0;
-    gbc.gridy = 2;
-    gbc.gridwidth = 3;
-    setOutputAsInputCheckBox = new JCheckBox("输出目录与源相同");
-    setOutputAsInputCheckBox.addActionListener(e -> toggleOutputAsInput());
-    add(setOutputAsInputCheckBox, gbc);
-    
-    // 是否覆盖复选框
-    gbc.gridy = 3;
-    overwriteCheckBox = new JCheckBox("是否覆盖");
-    overwriteCheckBox.setEnabled(false); // 初始化为禁用状态
-    overwriteCheckBox.addActionListener(e -> {
-        isCoverage = overwriteCheckBox.isSelected();
-    });
-    add(overwriteCheckBox, gbc);
+        // 输出目录与源相同复选框
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
+        setOutputAsInputCheckBox = new JCheckBox("输出目录与源相同");
+        setOutputAsInputCheckBox.addActionListener(e -> toggleOutputAsInput());
+        add(setOutputAsInputCheckBox, gbc);
 
-    // 运行按钮
-    gbc.gridx = 0;
-    gbc.gridy = 4;
-    gbc.gridwidth = 3;
-    runButton = new JButton("运行");
-    runButton.addActionListener(e -> runCommand());
-    add(runButton, gbc);
+        // 是否覆盖复选框
+        gbc.gridy = 3;
+        overwriteCheckBox = new JCheckBox("是否覆盖");
+        overwriteCheckBox.setEnabled(false); // 初始化为禁用状态
+        overwriteCheckBox.addActionListener(e -> {
+            isCoverage = overwriteCheckBox.isSelected();
+        });
+        add(overwriteCheckBox, gbc);
+
+        // 运行按钮
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 3;
+        runButton = new JButton("运行");
+        runButton.addActionListener(e -> runCommand());
+        add(runButton, gbc);
 
         // 控制台
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1;
         gbc.weighty = 1;
@@ -167,16 +168,16 @@ public class GUI extends JFrame {
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    JLabel iconLabel = new JLabel(new ImageIcon("logo.ico"));
-    iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    contentPanel.add(iconLabel);
+        JLabel iconLabel = new JLabel(new ImageIcon("logo.ico"));
+        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentPanel.add(iconLabel);
 
         JLabel titleLabel = new JLabel("Neko.UnLocker.Decrypt");
         titleLabel.setFont(new Font("Serif", Font.BOLD, 18));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(titleLabel);
 
-        JLabel versionLabel = new JLabel("版本: 2025.3.23-jdk21-windows-v0.6.0");
+        JLabel versionLabel = new JLabel("版本: 2025.3.24-jdk21-windows-v0.8.0");
         versionLabel.setFont(new Font("Serif", Font.PLAIN, 14));
         versionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(versionLabel);
@@ -288,91 +289,97 @@ public class GUI extends JFrame {
     }
 
     // 修改toggleOutputAsInput方法
-private void toggleOutputAsInput() {
-    if (setOutputAsInputCheckBox.isSelected()) {
-        outputPathField.setText(inputPathField.getText());
-        outputPathField.setEnabled(false);
-        overwriteCheckBox.setEnabled(true); // 启用“是否覆盖”复选框
-    } else {
-        outputPathField.setEnabled(true);
-        overwriteCheckBox.setEnabled(false); // 禁用“是否覆盖”复选框
-        overwriteCheckBox.setSelected(false); // 取消选中状态
-        isCoverage = false;
+    private void toggleOutputAsInput() {
+        if (setOutputAsInputCheckBox.isSelected()) {
+            outputPathField.setText(inputPathField.getText());
+            outputPathField.setEnabled(false);
+            overwriteCheckBox.setEnabled(true); // 启用“是否覆盖”复选框
+        } else {
+            outputPathField.setEnabled(true);
+            overwriteCheckBox.setEnabled(false); // 禁用“是否覆盖”复选框
+            overwriteCheckBox.setSelected(false); // 取消选中状态
+            isCoverage = false;
+        }
     }
-}
+
+    private void runOver(int errorCount, int warningCount, int processedCount){
+        String message = String.format("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
+        JOptionPane.showMessageDialog(this, message, "运行结束", JOptionPane.INFORMATION_MESSAGE);
+    }
 
     private void runCommand() {
-    // 获取输入目录、输出目录和复选框的状态
-    String inputDir = inputPathField.getText();
-    String outputDir = outputPathField.getText();
-    boolean isOutputAsInput = setOutputAsInputCheckBox.isSelected();
-    boolean isOverwrite = overwriteCheckBox.isSelected();
+        // 获取输入目录、输出目录和复选框的状态
+        String inputDir = inputPathField.getText();
+        String outputDir = outputPathField.getText();
+        boolean isOutputAsInput = setOutputAsInputCheckBox.isSelected();
+        boolean isOverwrite = overwriteCheckBox.isSelected();
 
-    // 显示确认对话框
-    String message = String.format("请确认以下设置:\n输入目录: %s\n输出目录: %s\n输出目录与源相同: %s\n是否覆盖: %s",
-            inputDir, outputDir, isOutputAsInput ? "是" : "否", isOverwrite ? "是" : "否");
-    int confirm = JOptionPane.showConfirmDialog(this, message, "确认设置", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        // 显示确认对话框
+        String message = String.format("请确认以下设置:\n输入目录: %s\n输出目录: %s\n输出目录与源相同: %s\n是否覆盖: %s",
+                inputDir, outputDir, isOutputAsInput ? "是" : "否", isOverwrite ? "是" : "否");
+        int confirm = JOptionPane.showConfirmDialog(this, message, "确认设置", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
-    // 如果用户点击“取消”按钮，则取消运行
-    if (confirm != JOptionPane.OK_OPTION) {
-        return;
-    }
-
-    // 禁用按钮并更改文本
-    runButton.setText("运行中");
-    runButton.setEnabled(false);
-
-    // 清空控制台
-    clearConsole();
-
-    if (inputDir.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
-        resetRunButton();
-        return;
-    }
-
-    if (!isOutputAsInput && outputDir.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
-        resetRunButton();
-        return;
-    }
-
-    // 清除 UnLock.log 文件内容
-    clearLogFile();
-
-    // 获取是否覆盖的状态
-    isCoverage = isOverwrite;
-
-    SwingWorker<Void, Void> worker = new SwingWorker<>() {
-        @Override
-        protected Void doInBackground() throws Exception {
-            try {
-                processFiles(inputDir, outputDir, isCoverage);
-                // 显示 UnLock.log 文件内容
-                displayLogFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-                console.append("处理文件时出错: " + e.getMessage() + "\n");
-            }
-            return null;
+        // 如果用户点击“取消”按钮，则取消运行
+        if (confirm != JOptionPane.OK_OPTION) {
+            return;
         }
 
-        @Override
-        protected void done() {
-            // 查找“程序结束”字样
-            String consoleText = console.getText();
-            if (consoleText.contains("程序结束")) {
-                int errorCount = countOccurrences(consoleText, "错误");
-                int warningCount = countOccurrences(consoleText, "警告");
-                int processedCount = countOccurrences(consoleText, "已处理");
+        // 禁用按钮并更改文本
+        runButton.setText("运行中");
+        runButton.setEnabled(false);
 
-                console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
-            }
+        // 清空控制台
+        clearConsole();
+
+        if (inputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
             resetRunButton();
+            return;
         }
-    };
-    worker.execute();
-}
+
+        if (!isOutputAsInput && outputDir.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
+            resetRunButton();
+            return;
+        }
+
+        // 清除 UnLock.log 文件内容
+        clearLogFile();
+
+        // 获取是否覆盖的状态
+        isCoverage = isOverwrite;
+
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    processFiles(inputDir, outputDir, isCoverage);
+                    // 显示 UnLock.log 文件内容
+                    displayLogFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    console.append("处理文件时出错: " + e.getMessage() + "\n");
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // 查找“程序结束”字样
+                String consoleText = console.getText();
+                if (consoleText.contains("程序结束")) {
+                    int errorCount = countOccurrences(consoleText, "错误");
+                    int warningCount = countOccurrences(consoleText, "警告");
+                    int processedCount = countOccurrences(consoleText, "已处理");
+
+                    console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
+                    runOver(errorCount, warningCount, processedCount);
+                }
+                resetRunButton();
+            }
+        };
+        worker.execute();
+    }
 
     private int countOccurrences(String text, String word) {
         Pattern pattern = Pattern.compile(word);
