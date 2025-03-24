@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 public class Cover {
 
-    public static void coverDir(Path srcPath, Path outPath) {
+    public static void coverDir(String srcPath, String outPath) {
         
     }
 }
