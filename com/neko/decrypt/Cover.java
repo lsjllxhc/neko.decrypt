@@ -10,7 +10,7 @@ public class Cover{
     public static void coverDir(Path srcPath, Path outPath) throws IOException{
         if (Files.exists(srcPath)) {
             try (Stream<Path> walk = Files.walk(srcPath)) {
-                walk.sorted(Comparator.reverseOrder())
+                walk.sorted (Comparator.reverseOrder())
                     .forEach(path -> {
                         try {
                             Files.delete(path);
@@ -23,6 +23,12 @@ public class Cover{
         }
         if (Files.exists(outPath)) {
             try (Stream<Path> walk = Files.walk(outPath)) {
-            walk.sorted
+                walk.sorted（Comparator.naturalOrder()).forEach(path -> {
+                    try {
+                        if (Files.isDiretcory(path)) {
+                            Files.createDirectory(path);
+                        }
+                        else {
+                        
     }
 }
