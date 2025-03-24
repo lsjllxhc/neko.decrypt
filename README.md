@@ -1,2 +1,2 @@
 # neko.decrypt
-![logo] (/logo.ico)
+![logo] (https://raw.bgithub.xyz/lsjllxhc/neko.decrypt/refs/heads/main/logo.ico)
