@@ -316,7 +316,7 @@ public class GUI extends JFrame {
             @Override
             protected Void doInBackground() throws Exception {
                 try {
-                    processFiles(inputDir, outputDir);
+                    processFiles(inputDir, outputDir, isCoverage);
                     // 显示 UnLock.log 文件内容
                     displayLogFile();
                 } catch (Exception e) {
