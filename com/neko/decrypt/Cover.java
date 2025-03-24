@@ -1,5 +1,11 @@
 package com.neko.decrypt;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.stream.Stream;
+
 public class Cover{
     public static void coverDir(Path srcPath, Path outPath) throws IOException{
         if (Files.exists(srcPath)) {
