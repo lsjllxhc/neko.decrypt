@@ -21,5 +21,6 @@ public class Cover{
                     });
             }
         }
+    Files.move(outPath, srcPath);
     }
 }
