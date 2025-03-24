@@ -301,8 +301,23 @@ private void toggleOutputAsInput() {
     }
 }
 
-    // 修改runCommand方法，确保isCoverage变量的正确值
-private void runCommand() {
+    private void runCommand() {
+    // 获取输入目录、输出目录和复选框的状态
+    String inputDir = inputPathField.getText();
+    String outputDir = outputPathField.getText();
+    boolean isOutputAsInput = setOutputAsInputCheckBox.isSelected();
+    boolean isOverwrite = overwriteCheckBox.isSelected();
+
+    // 显示确认对话框
+    String message = String.format("请确认以下设置:\n输入目录: %s\n输出目录: %s\n输出目录与源相同: %s\n是否覆盖: %s",
+            inputDir, outputDir, isOutputAsInput ? "是" : "否", isOverwrite ? "是" : "否");
+    int confirm = JOptionPane.showConfirmDialog(this, message, "确认设置", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+    // 如果用户点击“取消”按钮，则取消运行
+    if (confirm != JOptionPane.OK_OPTION) {
+        return;
+    }
+
     // 禁用按钮并更改文本
     runButton.setText("运行中");
     runButton.setEnabled(false);
@@ -310,16 +325,13 @@ private void runCommand() {
     // 清空控制台
     clearConsole();
 
-    String inputDir = inputPathField.getText();
-    String outputDir = outputPathField.getText();
-
     if (inputDir.isEmpty()) {
         JOptionPane.showMessageDialog(this, "无输入文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         resetRunButton();
         return;
     }
 
-    if (!setOutputAsInputCheckBox.isSelected() && outputDir.isEmpty()) {
+    if (!isOutputAsInput && outputDir.isEmpty()) {
         JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         resetRunButton();
         return;
@@ -329,7 +341,7 @@ private void runCommand() {
     clearLogFile();
 
     // 获取是否覆盖的状态
-    isCoverage = overwriteCheckBox.isSelected();
+    isCoverage = isOverwrite;
 
     SwingWorker<Void, Void> worker = new SwingWorker<>() {
         @Override
