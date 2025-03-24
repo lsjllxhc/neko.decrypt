@@ -118,21 +118,30 @@ public class GUI extends JFrame {
         outputButton.addActionListener(e -> selectOutputFolder());
         add(outputButton, gbc);
 
-        // 输出目录与源相同复选框
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 3;
-        setOutputAsInputCheckBox = new JCheckBox("输出目录与源相同");
-        setOutputAsInputCheckBox.addActionListener(e -> toggleOutputAsInput());
-        add(setOutputAsInputCheckBox, gbc);
+            // 输出目录与源相同复选框
+    gbc.gridx = 0;
+    gbc.gridy = 2;
+    gbc.gridwidth = 3;
+    setOutputAsInputCheckBox = new JCheckBox("输出目录与源相同");
+    setOutputAsInputCheckBox.addActionListener(e -> toggleOutputAsInput());
+    add(setOutputAsInputCheckBox, gbc);
+    
+    // 是否覆盖复选框
+    gbc.gridy = 3;
+    overwriteCheckBox = new JCheckBox("是否覆盖");
+    overwriteCheckBox.setEnabled(false); // 初始化为禁用状态
+    overwriteCheckBox.addActionListener(e -> {
+        isCoverage = overwriteCheckBox.isSelected();
+    });
+    add(overwriteCheckBox, gbc);
 
-        // 运行按钮
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 3;
-        runButton = new JButton("运行");
-        runButton.addActionListener(e -> runCommand());
-        add(runButton, gbc);
+    // 运行按钮
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    gbc.gridwidth = 3;
+    runButton = new JButton("运行");
+    runButton.addActionListener(e -> runCommand());
+    add(runButton, gbc);
 
         // 控制台
         gbc.gridy = 4;
