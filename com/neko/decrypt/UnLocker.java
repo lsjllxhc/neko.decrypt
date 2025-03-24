@@ -27,28 +27,34 @@ public class UnLocker {
         }
     }
 
-    public static void processFiles(String inputDir, String outputDir, boolean isCoverage) throws IOException {
-        logger.info("程序开始");
-        Path srcPath = Path.of(inputDir);
-        Path outPath = Path.of(outputDir);
+public static void processFiles(String inputDir, String outputDir, boolean isCoverage) throws IOException {
+    logger.info("程序开始");
+    Path srcPath = Path.of(inputDir);
+    
+    // 如果 inputDir 和 outputDir 相同，并且 isCoverage 为 false，则修改 outputDir
+    if (inputDir.equals(outputDir) && !isCoverage) {
+        outputDir = outputDir + "_unlocked";
+    }
+    
+    Path outPath = Path.of(outputDir);
 
-        try (Stream<Path> lines = Files.list(srcPath)) {
-            var iterator = lines.iterator();
-            while (iterator.hasNext()) {
-                Path path = iterator.next();
-                try {
-                    SecretKey secretKey = getSecretKey(path);
-                    if (secretKey == null)
-                        continue;
-                    logger.info("已处理: " + path + " " + secretKey);
-                    handleDiv(path, outPath, secretKey);
-                } catch (Exception e) {
-                    logger.severe("错误: " + path + " -> " + e.getMessage());
-                }
+    try (Stream<Path> lines = Files.list(srcPath)) {
+        var iterator = lines.iterator();
+        while (iterator.hasNext()) {
+            Path path = iterator.next();
+            try {
+                SecretKey secretKey = getSecretKey(path);
+                if (secretKey == null)
+                    continue;
+                logger.info("已处理: " + path + " " + secretKey);
+                handleDiv(path, outPath, secretKey);
+            } catch (Exception e) {
+                logger.severe("错误: " + path + " -> " + e.getMessage());
             }
         }
-        logger.info("程序结束");
     }
+    logger.info("程序结束");
+}
 
     public static void handleDiv(Path srcDiv, Path targetDiv, SecretKey secretKey) throws IOException {
         Files.walkFileTree(srcDiv, new FileVisitor<>() {
