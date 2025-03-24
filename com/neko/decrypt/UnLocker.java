@@ -11,6 +11,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import static com.neko.decrypt.MMK.*;
+import static com.neko.decrypt.Cover.*;
 
 public class UnLocker {
 
@@ -27,34 +28,41 @@ public class UnLocker {
         }
     }
 
-public static void processFiles(String inputDir, String outputDir, boolean isCoverage) throws IOException {
-    logger.info("程序开始");
-    Path srcPath = Path.of(inputDir);
-    
-    // 如果 inputDir 和 outputDir 相同，并且 isCoverage 为 false，则修改 outputDir
-    if (inputDir.equals(outputDir) && !isCoverage) {
-        outputDir = outputDir + "_unlocked";
-    }
-    
-    Path outPath = Path.of(outputDir);
+    public static void processFiles(String inputDir, String outputDir, boolean isCoverage) throws IOException {
+        logger.info("程序开始");
+        Path srcPath = Path.of(inputDir);
 
-    try (Stream<Path> lines = Files.list(srcPath)) {
-        var iterator = lines.iterator();
-        while (iterator.hasNext()) {
-            Path path = iterator.next();
-            try {
-                SecretKey secretKey = getSecretKey(path);
-                if (secretKey == null)
-                    continue;
-                logger.info("已处理: " + path + " " + secretKey);
-                handleDiv(path, outPath, secretKey);
-            } catch (Exception e) {
-                logger.severe("错误: " + path + " -> " + e.getMessage());
+        // 如果 inputDir 和 outputDir 相同，并且 isCoverage 为 false，则修改 outputDir
+        if (inputDir.equals(outputDir)) {
+            outputDir = outputDir + "_unlocked";
+        }
+
+        Path outPath = Path.of(outputDir);
+
+        if (!Files.exists(outPath)){
+            Files.createDirectory(outPath);
+        }
+
+        try (Stream<Path> lines = Files.list(srcPath)) {
+            var iterator = lines.iterator();
+            while (iterator.hasNext()) {
+                Path path = iterator.next();
+                try {
+                    SecretKey secretKey = getSecretKey(path);
+                    if (secretKey == null)
+                        continue;
+                    logger.info("已处理: " + path + " " + secretKey);
+                    handleDiv(path, outPath, secretKey);
+                } catch (Exception e) {
+                    logger.severe("错误: " + path + " -> " + e.getMessage());
+                }
             }
         }
+        if (isCoverage) {
+            coverDir(inputDir, outputDir);
+        }
+        logger.info("程序结束");
     }
-    logger.info("程序结束");
-}
 
     public static void handleDiv(Path srcDiv, Path targetDiv, SecretKey secretKey) throws IOException {
         Files.walkFileTree(srcDiv, new FileVisitor<>() {
@@ -86,7 +94,6 @@ public static void processFiles(String inputDir, String outputDir, boolean isCov
                             Files.write(target, data);
                         }
                     }
-
                 return FileVisitResult.CONTINUE;
             }
 
