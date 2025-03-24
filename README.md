@@ -1,1 +1,1 @@
-# neko.decrypt ![logo](./logo.ico)
+# neko.decrypt ![logo](https://github.com/lsjllxhc/neko.decrypt/blob/main/logo.ico)
