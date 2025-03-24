@@ -90,7 +90,7 @@ public class GUI extends JFrame {
         // 输入文件夹选择器
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(new JLabel("输入文件夹:"), gbc);
+        add(new JLabel("输入目录:"), gbc);
 
         gbc.gridx = 1;
         inputPathField = new JTextField(30);
@@ -105,7 +105,7 @@ public class GUI extends JFrame {
         // 输出文件夹选择器
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(new JLabel("输出文件夹:"), gbc);
+        add(new JLabel("输出目录:"), gbc);
 
         gbc.gridx = 1;
         outputPathField = new JTextField(30);
@@ -121,7 +121,7 @@ public class GUI extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 3;
-        setOutputAsInputCheckBox = new JCheckBox("设置输出文件夹为输入文件夹");
+        setOutputAsInputCheckBox = new JCheckBox("输出目录与源相同");
         setOutputAsInputCheckBox.addActionListener(e -> toggleOutputAsInput());
         add(setOutputAsInputCheckBox, gbc);
 
