@@ -189,7 +189,7 @@ public class GUI extends JFrame {
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(titleLabel);
 
-        JLabel versionLabel = new JLabel("版本: 2025.3.24-jdk21-windows-v0.8.0");
+        JLabel versionLabel = new JLabel("版本: 2025.3.24-jdk21-windows-v0.9.0");
         versionLabel.setFont(new Font("Serif", Font.PLAIN, 14));
         versionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(versionLabel);
