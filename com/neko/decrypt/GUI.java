@@ -115,7 +115,7 @@ public class GUI extends JFrame {
 
         gbc.gridx = 2;
         JButton outputButton = new JButton("选择");
-        outputButton.setPreferredSize(new Dimension(60, 30)); // 设置为合适的大小
+        outputButton.setPreferredSize(new Dimension(30, 30)); // 设置为合适的大小
         outputButton.addActionListener(e -> selectOutputFolder());
         add(outputButton, gbc);
 
@@ -136,16 +136,20 @@ public class GUI extends JFrame {
         });
         add(overwriteCheckBox, gbc);
 
+        gbc.gridy = 4;
+        openOutputFolderCheckBox = new JCheckBox("结束时是否打开输出文件夹");
+        add(openOutputFolderCheckBox, gbc);
+
         // 运行按钮
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 3;
         runButton = new JButton("运行");
         runButton.addActionListener(e -> runCommand());
         add(runButton, gbc);
 
         // 控制台
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1;
         gbc.weighty = 1;
