@@ -379,8 +379,9 @@ public class GUI extends JFrame {
                     console.append("处理结束\n错误数量: " + errorCount + "\n警告数量: " + warningCount + "\n已处理数量: " + processedCount + "\n");
                     runOver(errorCount, warningCount, processedCount);
 
-                    if (!isOverwrite){
-                        outputDir = outputDir + "_unlocked";
+                    if (setOutputAsInputCheckBox.isSelected() && !isOverwrite){
+                        setOutputAsInputCheckBox.setEnabled(false);
+                        outputDir = inputDir + "_unlocked";
                     }
 
                     if (openOutputFolderCheckBox.isSelected()) {
