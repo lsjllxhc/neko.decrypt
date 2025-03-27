@@ -4,13 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.neko.decrypt.UnLocker.*;
-
-import com.neko.decrypt.FixMotions.*;
 
 import static com.neko.decrypt.UnLocker.processFiles;
 
@@ -21,6 +16,7 @@ public class GUI extends JFrame {
     private JButton runButton;
     private JCheckBox setOutputAsInputCheckBox;
     private JCheckBox overwriteCheckBox;
+    private JCheckBox openOutputFolderCheckBox;
     private boolean isCoverage = false;
 
     public GUI() {
@@ -142,11 +138,6 @@ public class GUI extends JFrame {
         gbc.gridy = 4;
         openOutputFolderCheckBox = new JCheckBox("结束时是否打开输出文件夹");
         add(openOutputFolderCheckBox, gbc);
-
-        // 是否修复motions文件
-        gbc.gridy = 5;
-        isFixMotionsCheckBox = new JCheckBox("是否修复motions文件");
-        add(isFixMotionsCheckBox, gbc);
 
         // 运行按钮
         gbc.gridx = 0;
@@ -293,7 +284,7 @@ public class GUI extends JFrame {
             JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
-                Desktop.getDesktop().open(new File(outputDir));
+                Desktop.getDesktop().open(new File(outputPathField.getText()));
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "无法打开输出文件夹", "错误", JOptionPane.ERROR_MESSAGE);
             }
@@ -322,13 +313,13 @@ public class GUI extends JFrame {
     private void runCommand() {
         // 获取输入目录、输出目录和复选框的状态
         String inputDir = inputPathField.getText();
-        String outputDir = outputPathField.getText();
+        final String[] outputDir = {outputPathField.getText()};
         boolean isOutputAsInput = setOutputAsInputCheckBox.isSelected();
         boolean isOverwrite = overwriteCheckBox.isSelected();
 
         // 显示确认对话框
         String message = String.format("请确认以下设置:\n输入目录: %s\n输出目录: %s\n输出目录与源相同: %s\n是否覆盖: %s",
-                inputDir, outputDir, isOutputAsInput ? "是" : "否", isOverwrite ? "是" : "否");
+                inputDir, outputDir[0], isOutputAsInput ? "是" : "否", isOverwrite ? "是" : "否");
         int confirm = JOptionPane.showConfirmDialog(this, message, "确认设置", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
         // 如果用户点击“取消”按钮，则取消运行
@@ -349,7 +340,7 @@ public class GUI extends JFrame {
             return;
         }
 
-        if (!isOutputAsInput && outputDir.isEmpty()) {
+        if (!isOutputAsInput && outputDir[0].isEmpty()) {
             JOptionPane.showMessageDialog(this, "未选择输出文件夹", "警告", JOptionPane.WARNING_MESSAGE);
             resetRunButton();
             return;
@@ -365,7 +356,7 @@ public class GUI extends JFrame {
             @Override
             protected Void doInBackground() throws Exception {
                 try {
-                    processFiles(inputDir, outputDir, isCoverage);
+                    processFiles(inputDir, outputDir[0], isCoverage);
                     // 显示 UnLock.log 文件内容
                     displayLogFile();
                 } catch (Exception e) {
@@ -388,12 +379,9 @@ public class GUI extends JFrame {
                     runOver(errorCount, warningCount, processedCount);
 
                     if (setOutputAsInputCheckBox.isSelected() && !isOverwrite){
-                        setOutputAsInputCheckBox.setEnabled(false);
-                        outputDir = inputDir + "_unlocked";
-                    }
-
-                    if (isFixMotionsCheckBox.isSelected()){
-                        Fix(outputDir);
+                        setOutputAsInputCheckBox.setSelected(false);
+                        outputPathField.setText(inputPathField.getText() + "_unlocked");
+                        outputPathField.setEnabled(true);
                     }
 
                     if (openOutputFolderCheckBox.isSelected()) {
