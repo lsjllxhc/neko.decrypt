@@ -136,9 +136,15 @@ public class GUI extends JFrame {
         });
         add(overwriteCheckBox, gbc);
 
+        // 结束时是否打开输出文件夹复选框
         gbc.gridy = 4;
         openOutputFolderCheckBox = new JCheckBox("结束时是否打开输出文件夹");
         add(openOutputFolderCheckBox, gbc);
+
+        // 是否修复motions文件
+        gbc.gridy = 5;
+        isFixMotionsCheckBox = new JCheckBox("是否修复motions文件");
+        add(isFixMotionsCheckBox, gbc);
 
         // 运行按钮
         gbc.gridx = 0;
@@ -382,6 +388,10 @@ public class GUI extends JFrame {
                     if (setOutputAsInputCheckBox.isSelected() && !isOverwrite){
                         setOutputAsInputCheckBox.setEnabled(false);
                         outputDir = inputDir + "_unlocked";
+                    }
+
+                    if (isFixMotionsCheckBox.isSelected()){
+                        fixMotions(outputDir);
                     }
 
                     if (openOutputFolderCheckBox.isSelected()) {
