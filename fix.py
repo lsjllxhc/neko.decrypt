@@ -7,7 +7,7 @@ folder_path = input("请输入文件夹目录路径：")
 # 遍历文件夹中的所有文件
 for root, dirs, files in os.walk(folder_path):
     for file_name in files:
-        if file_name.endswith('.motion') and 'idle' not in file_name and 'photo' not in file_name:
+        if file_name.endswith('.json') and 'idle' not in file_name and 'photo' not in file_name:
             file_path = os.path.join(root, file_name)
             
             # 读取JSON文件
