@@ -29,7 +29,7 @@ public class FixMotions {
                 if (file.isDirectory()) {
                     processFolder(file);
                 } else {
-                    if (file.getName().endsWith(".json") && !file.getName().contains("idle") && !file.getName().contains("photo")) {
+                    if (file.getName().endsWith(".json") && !file.getName().contains("idle") && !file.getName().contains("photo") && file.getName().contains("motion3")) {
                         processFile(file);
                     }
                 }
