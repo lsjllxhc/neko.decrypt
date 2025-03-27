@@ -391,7 +391,7 @@ public class GUI extends JFrame {
                     }
 
                     if (isFixMotionsCheckBox.isSelected()){
-                        fixMotions(outputDir);
+                        Fix(outputDir);
                     }
 
                     if (openOutputFolderCheckBox.isSelected()) {
