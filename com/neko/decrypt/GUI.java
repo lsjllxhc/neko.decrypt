@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 import com.neko.decrypt.UnLocker.*;
 
+import com.neko.decrypt.FixMotions.*;
+
 import static com.neko.decrypt.UnLocker.processFiles;
 
 public class GUI extends JFrame {
